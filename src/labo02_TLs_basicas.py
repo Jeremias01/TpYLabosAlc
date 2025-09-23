@@ -14,14 +14,6 @@ Created on Tue Sep  9 11:32:39 2025
 
 import numpy as np
 
-def calcularAx(A,x):
-    res = []
-    for row in A:
-        res.append(0)
-        for a1, x1 in zip(row,x):
-            res[-1] += a1 * x1
-
-    return np.array(res)
 
 a=np.cos(0)
 pi=np.pi
@@ -43,7 +35,7 @@ escala([1,2,3,34,5,6])
 
 
 def rota_y_escala(theta,s):
-    res=escala(s) @ rota(theta) sadfasdf
+    res=escala(s) @ rota(theta) 
     return res
     
 rota_y_escala(pi/2,[1,2])

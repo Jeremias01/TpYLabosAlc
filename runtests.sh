@@ -1,0 +1,2 @@
+echo "ASEGURARSE DE ESTAR EN DIRECTORIO RAIZ DEL PROYECTO"
+python3 tests/runAllTests.py

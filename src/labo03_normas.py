@@ -1,11 +1,48 @@
-import numpy as np
 
-def maximo(l):
-   res = l[0]
-   for i in l:
-    if i > res:
-       res = i
-   return res
+"""
+def norma(x,p):
+    if p == 'inf':
+        maxv = abs(x[0])
+        for item in x:
+            if abs(item) > maxv:
+                maxv = abs(item)
+        return maxv
+    suma=0
+    for i in x:
+        suma+=abs(i)**p
+    return (suma)**(1/p)
+
+
+norma([-1,1],'inf')
+
+
+def normaliza(X,p):
+    res = []
+    for item in X:
+        res.append(norma(item,p))
+    return np.array(res)
+
+def normaMatMC(A,q,p,Np):
+    randxs = np.random.rand(Np,len(A[0]))
+    maxv = norma(calcularAx(A, randxs[0]),p)/norma(randxs[0],q)
+    for x in randxs:
+        n = norma(calcularAx(A, x),p)/norma(x,q)
+        if n>maxv: maxv=n
+    return maxv
+"""
+    
+    
+    
+
+    
+
+
+
+import numpy as np
+import sys
+sys.path.append(".") 
+
+from labo00_auxiliares import *
 
 def norma(x, p):
     if p != 'inf':
@@ -31,14 +68,7 @@ def normaliza(X,p):
     return res
 
 
-def calcularAx(A,x):
-  res = []
-  for i in range(len(A)):
-        v = 0
-        for j in range(len(A[0])):
-            v += x[j]*A[i][j]
-        res.append(v)
-  return res
+
 
 
 def normaMatMC(A, q, p, Np):
@@ -60,14 +90,6 @@ def normaMatMC(A, q, p, Np):
     return norma_max, vector_max
 
 
-def traspuesta(A):
-    res = []
-    for j in range(len(A[0])):       
-        fila_trasp = []
-        for fila in A:
-            fila_trasp.append(fila[j])
-        res.append(fila_trasp)
-    return res
 
 
 def suma_filas(A):
