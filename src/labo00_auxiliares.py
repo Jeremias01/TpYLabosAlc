@@ -62,4 +62,15 @@ def traspuesta(A):
         for fila in A:
             fila_trasp.append(fila[j])
         res.append(fila_trasp)
-    return res
+    return np.array(res)
+
+def prodint(v1,v2):  #prod int definido para vectores de la misma long
+    if(len(v1)==len(v2)):
+        res=0
+        for i in range(len(v1)):
+            res+=v1[i]*v2[i]
+        return res
+
+
+def cuadrada(A):
+    return len(A)>0 and len(A) == len(A[0])  

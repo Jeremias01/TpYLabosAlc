@@ -1,12 +1,15 @@
 import numpy as np
   
-epsilon = (10**(-15))/2
+epsilon = 0.01 #(10**(-15))/2
 def error(x, y):
   x = np.float64(x)
   y = np.float64(y)
     
   return abs(x-y)
-  
+
+def feq(x,y): # float equals
+  return error(x,y) < epsilon # no se si absoluto o no
+
 def error_relativo(x,y):
   x = np.float64(x)
   y = np.float64(y)
