@@ -68,7 +68,7 @@ def prodint(v1,v2):  #prod int definido para vectores de la misma long
     if(len(v1)==len(v2)):
         res=0
         for i in range(len(v1)):
-            res+=v1[i]*v2[i]
+            res+=np.conj(v1[i])*v2[i]
         return res
 
 

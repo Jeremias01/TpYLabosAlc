@@ -44,6 +44,7 @@ sys.path.append(".")
 
 from labo00_auxiliares import *
 
+# calcula norma de un vector, vale usar ´inf´
 def norma(x, p):
     if p != 'inf':
      suma = 0
@@ -59,8 +60,10 @@ def norma(x, p):
           n = x[i].astype(float)
           lista.append(abs(x[i]))
        res = (maximo(lista))
+    
     return (res)
 
+# normaliza una lista de vectores
 def normaliza(X,p):
     res = []
     for i in range(len(X)):
