@@ -49,6 +49,11 @@ def QR_con_GS(A,tol=1e-12,retorna_nops=False):
 A=[[1,1,0],[1,1,0],[0,0,1]]
 print(QR_con_GS(A))
 
+def houseHolder(u):
+    mMenosK = len(u)
+    # recordar. hacer [u] es lo mismo que u^t. quizas hay una mejor manera de convertir vector en matriz que no lo traspone. 
+    return np.identity(mMenosK) - 2 * matmul(traspuesta([u]), [u])
+
 
 
 def QR_con_HH(A,tol=1e-12):
@@ -58,6 +63,26 @@ def QR_con_HH(A,tol=1e-12):
     retorna matrices Q y R calculadas con reflexiones de Householder
     Si la matriz A no cumple m>=n, debe retornar None
     """
+    if ( m := len(A) ) == 0 or m < ( n := len(A[0])):
+        return None
+    
+    R = A.astype(np.float64)
+    Q = np.identity(m)
+    for k in range(0,n):
+        x = R[k:, k]
+        alpha = - sign(x[0]) * norma(x, 2)     # doble negacion redundante??
+        u = x - alpha * np.identity(m-k)[0]
+        if (unorma := norma(u, 2)) > tol:
+            u = u / unorma
+            Hk =  houseHolder(u)
+            for iter in range(k): # preguntar si podemos usar np.block
+                Hk = expandirDiagonalPrincipalDesdeArriba(Hk, 1)
+            R = matmul(Hk, R)
+            Q = matmul(Q, traspuesta(Hk))
+    return Q,R
+
+
+
 def calculaQR(A,metodo='RH',tol=1e-12):
     """
     A una matriz de n x n 
@@ -66,3 +91,12 @@ def calculaQR(A,metodo='RH',tol=1e-12):
     retorna matrices Q y R calculadas con Gram Schmidt (y como tercer argumento opcional, el numero de operaciones)
     Si el metodo no esta entre las opciones, retorna None
     """
+    match metodo:
+        case 'RH':
+            return QR_con_HH(A,tol=1e-12)
+
+        case 'GS':
+            # el enunciado dice que con tercer parametro opcional el numero de operaciones, pero no
+            # es argumeto a calculaQR, no tiene sentido (?)
+            return QR_con_GS(A,tol=1e-12)
+        

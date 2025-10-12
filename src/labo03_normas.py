@@ -44,7 +44,7 @@ sys.path.append(".")
 
 from labo00_auxiliares import *
 
-# calcula norma de un vector, vale usar ´inf´
+# calcula norma p de un vector x, vale usar ´inf´
 def norma(x, p):
     if p != 'inf':
      suma = 0

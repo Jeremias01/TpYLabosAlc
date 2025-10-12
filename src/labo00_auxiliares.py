@@ -74,3 +74,18 @@ def prodint(v1,v2):  #prod int definido para vectores de la misma long
 
 def cuadrada(A):
     return len(A)>0 and len(A) == len(A[0])  
+
+
+def expandirDiagonalPrincipalDesdeArriba(D, zerozero):
+    D = np.insert(D, 0, np.zeros((1,len(D))) ,0)
+    D = np.insert(D, 0, np.zeros((1,len(D))),1)
+    D[0][0] = zerozero
+    return D
+
+def sign(n):
+    if n == 0:
+        return 0
+    if n > 0:
+        return 1
+    if n < 0:
+        return -1 

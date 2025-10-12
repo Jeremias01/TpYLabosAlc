@@ -43,17 +43,12 @@ def metpot2k(A, tol =10**(-15) ,K=1000):
     return vSombrero, aVal, k, err
 
 
-def reflectorHouseholder(v):
+def reflectorHouseholder(v): # pq es correcto esto? parece raro
     n = len(v)
     idn = np.identity(n)
     uut = matmul(idn[0]-v, traspuesta(idn[0]-v))
     return idn - 2 * (uut / norma(uut,2))
 
-def expandirDiagonalPrincipalDesdeArriba(D, zerozero):
-    D = np.insert(D, 0, len(D),0)
-    D = np.insert(D, 0, len(D),1)
-    D[0][0] = zerozero
-    return D
 
 
 def diagRH(A, tol =10**(-15) ,K=1000):

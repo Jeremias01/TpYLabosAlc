@@ -42,8 +42,9 @@ def run():
     # --- TESTS PARA QR_by_HH ---
     Q2h,R2h = QR_con_GS(A2)
     check_QR(Q2h,R2h,A2)
-
     Q3h,R3h = QR_con_HH(A3)
+    print("test con GS:\n",QR_con_GS(A3)[0], "\n\n", QR_con_GS(A3)[1])
+    print("test con HH:\n", QR_con_HH(A3)[0], "\n\n", QR_con_HH(A3)[1])
     check_QR(Q3h,R3h,A3)
 
     Q4h,R4h = QR_con_HH(A4)
