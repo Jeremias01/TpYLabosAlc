@@ -68,7 +68,7 @@ def diagRH(A, tol =10**(-15) ,K=1000):
 
     v,aVal,_ = metpot2k(A,tol,K)
     e1_menos_v = np.identity(n)[0] -v
-    Hv = np.identity(n) - 2 * matmul(matCol(e1_menos_v), matFila(e1_menos_v)) / (norma(e1_menos_v, 2)**2) #houseHolder( e1_menos_v / norma(e1_menos_v, 2))
+    Hv = houseHolder( e1_menos_v / norma(e1_menos_v, 2))
     if n == 2:
         S_matriz_avecs = Hv
         D_matriz_avals = matmul(Hv, matmul(A, traspuesta(Hv)))
@@ -76,8 +76,8 @@ def diagRH(A, tol =10**(-15) ,K=1000):
         B = matmul(Hv, matmul(A, traspuesta(Hv)))
         ASombrero = B[1:,1:]
         DSombero, SSombrero = diagRH(ASombrero, tol, K)
-        S_matriz_avecs = expandirDiagonalPrincipalDesdeArriba(DSombero, aVal)  
-        D_matriz_avals = matmul(Hv,
+        D_matriz_avals = expandirDiagonalPrincipalDesdeArriba(DSombero, aVal)  
+        S_matriz_avecs = matmul(Hv,
             expandirDiagonalPrincipalDesdeArriba(SSombrero, 1))      
 
 
