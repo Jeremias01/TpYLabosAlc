@@ -29,5 +29,3 @@ def run():
     diagRH(A2)
 
     print("All tests for labo6 passed")
-
-run()
