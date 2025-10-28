@@ -1,4 +1,4 @@
-### TODO:
+### TO DO:
 
 - [ ] Escribir tests para labo0
 - [ ] cambiar labo3 para no usar np.linalg.inv qu esta prohibido
