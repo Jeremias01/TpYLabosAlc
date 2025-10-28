@@ -89,3 +89,10 @@ def sign(n):
         return 1
     if n < 0:
         return -1 
+
+def matFila(v):
+    return [v]
+
+def matCol(v):
+    return traspuesta([v])
+

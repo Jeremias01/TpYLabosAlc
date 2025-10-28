@@ -1,7 +1,10 @@
 import numpy as np
+import sys
+sys.path.append(".") 
 from labo00_auxiliares import *
+from labo01_errores_igualdad import *
 from labo03_normas import norma
-from labo01_errores_igualdad import epsilon, feq
+from labo05_QR import houseHolder
 
 
 def aplicarPotenciaUnaVez(A,v):
@@ -31,7 +34,7 @@ def metpot2k(A, tol =10**(-15) ,K=1000):
         return None
     v = np.random.randn(n)
     vSombrero, e = aplicarPotenciaDosVeces(A, v)
-    for k in range(K):
+    for k in range(int(K)):
         if abs(abs(e)-1)<=tol:
             break
         v = vSombrero
@@ -40,14 +43,14 @@ def metpot2k(A, tol =10**(-15) ,K=1000):
     aVal = prodint(vSombrero, calcularAx(A, vSombrero))
     err = e-1
 
-    return vSombrero, aVal, k, err
+    return vSombrero, aVal, k
 
 
-def reflectorHouseholder(v): # pq es correcto esto? parece raro
-    n = len(v)
-    idn = np.identity(n)
-    uut = matmul(idn[0]-v, traspuesta(idn[0]-v))
-    return idn - 2 * (uut / norma(uut,2))
+#def reflectorHouseholder(v): # pq es correcto esto? parece raro
+#    n = len(v)
+#    idn = np.identity(n)
+#    uut = matmul([idn[0]-v], [idn[0]-v])
+#   return idn - 2 * (uut / norma(uut,2))
 
 
 
@@ -59,23 +62,23 @@ def diagRH(A, tol =10**(-15) ,K=1000):
     retorna matriz de autovectores S y matriz de autovalores D, tal que A = S D S. T
     Si la matriz A no es simetrica, debe retornar None.
     """
-    if not cuadrada(A):
+    if not cuadrada(A) or not esSimetrica(A):
         return None
     n = len(A)
 
-    v,aVal,_,_ = metpot2k(A,tol,K)
-    Hv = reflectorHouseholder(v)
-
+    v,aVal,_ = metpot2k(A,tol,K)
+    e1_menos_v = np.identity(n)[0] -v
+    Hv = np.identity(n) - 2 * matmul(matCol(e1_menos_v), matFila(e1_menos_v)) / (norma(e1_menos_v, 2)**2) #houseHolder( e1_menos_v / norma(e1_menos_v, 2))
     if n == 2:
         S_matriz_avecs = Hv
         D_matriz_avals = matmul(Hv, matmul(A, traspuesta(Hv)))
     else:
         B = matmul(Hv, matmul(A, traspuesta(Hv)))
         ASombrero = B[1:,1:]
-        SSombrero, DSombero = diagRH(ASombrero, tol, K)
-        D = expandirDiagonalPrincipalDesdeArriba(DSombero, aVal)  
-        S = matmul(Hv,
+        DSombero, SSombrero = diagRH(ASombrero, tol, K)
+        S_matriz_avecs = expandirDiagonalPrincipalDesdeArriba(DSombero, aVal)  
+        D_matriz_avals = matmul(Hv,
             expandirDiagonalPrincipalDesdeArriba(SSombrero, 1))      
 
 
-    pass
+    return D_matriz_avals, S_matriz_avecs

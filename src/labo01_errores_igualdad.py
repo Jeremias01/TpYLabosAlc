@@ -1,5 +1,10 @@
 import numpy as np
-  
+import sys
+sys.path.append(".") 
+
+from labo00_auxiliares import *
+
+
 epsilon = 0.01 #(10**(-15))/2
 def error(x, y):
   x = np.float64(x)
@@ -29,3 +34,6 @@ def matricesIguales(A,B):
        
    return True
 
+# no esta en el labo pero seria raro ponerla en el labo00
+def esSimetrica(A):
+    return matricesIguales(A, traspuesta(A))

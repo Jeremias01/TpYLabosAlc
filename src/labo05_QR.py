@@ -46,13 +46,14 @@ def QR_con_GS(A,tol=1e-12,retorna_nops=False):
 
 
 #A=[[12,-51,4],[12,-52,4],[-4,24,-41]]
-A=[[1,1,0],[1,1,0],[0,0,1]]
-print(QR_con_GS(A))
+#A=[[1,1,0],[1,1,0],[0,0,1]]
+#print(QR_con_GS(A))
+
 
 def houseHolder(u):
-    mMenosK = len(u)
-    # recordar. hacer [u] es lo mismo que u^t. quizas hay una mejor manera de convertir vector en matriz que no lo traspone. 
-    return np.identity(mMenosK) - 2 * matmul(traspuesta([u]), [u])
+    # precondición: u tal que ||u||_2 = 1
+    mMenosK = len(u) 
+    return np.identity(mMenosK) - 2 * matmul(matCol(u), matFila(u))
 
 
 
