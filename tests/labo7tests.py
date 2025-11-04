@@ -145,3 +145,5 @@ def run():
     A_rala = crea_rala(listado,5,5)
     v = np.random.random(5)
     assert np.allclose(multiplica_rala_vector(A_rala,v), A @ v)
+
+run()

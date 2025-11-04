@@ -122,7 +122,7 @@ def normaExacta(A, p=[1, 'inf']):
 def condMC(A,p, Np):
     norma_A = normaMatMC(A, p, p, Np)
     norma_Inversa = normaMatMC(np.linalg.inv(A), p, p, Np)
-    return norma_A*norma_Inversa
+    return norma_A[0] * norma_Inversa[0]
 
 
 def condExacta(A,p):

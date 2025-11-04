@@ -23,42 +23,43 @@ def run():
     # Tests para rota_y_escala
     # ===========================
     assert(
-        np.allclose(rota_y_escala([0, 2, 3]), np.array([[2, 0], [0, 3]]))
+        np.allclose(rota_y_escala(0, [2, 3]), np.array([[2, 0], [0, 3]]))
     )
     assert(np.allclose(
-        rota_y_escala([np.pi/2, 1, 1]), np.array([[0, -1], [1, 0]]))
+        rota_y_escala(np.pi/2, [1, 1]), np.array([[0, -1], [1, 0]]))
     )
     assert(np.allclose(
-        rota_y_escala([np.pi, 2, 2]), np.array([[-2, 0], [0, -2]]))
+        rota_y_escala(np.pi, [2, 2]), np.array([[-2, 0], [0, -2]]))
     )
     
     # ===========================
     # Tests para afín
     # ===========================
     assert(np.allclose(
-        afin([0, 1], [1, 1, 2]),
+        afin(0, [1, 1], [1, 2]),
         np.array([[1, 0, 1],
                   [0, 1, 2],
                   [0, 0, 1]])
     ))
     assert(np.allclose(
-        afin([np.pi/2, 1], [0, 1]),
+        afin(np.pi/2, [1,1], [0, 0]),
         np.array([[0, -1, 0],
-                  [1,  0, 1],
+                  [1,  0, 0],
                   [0,  0, 1]])
     ))
     assert(np.allclose(
-        afin([0, 2], [3, 1, 1]),
-        np.array([[2, 0, 3],
-                  [0, 1, 1],
+        afin(0, [2, 3], [1, 1]),
+        np.array([[2, 0, 1],
+                  [0, 3, 1],
                   [0, 0, 1]])
     ))
     
     # ===========================
     # Tests para trans_afín
     # ===========================
+    print(trans_afin(np.array([1, 0]), np.pi/2, [1, 1], [0, 0]))
     assert(np.allclose(
-        trans_afin(np.array([1, 0]), np.pi/2, [1, 0], [0, 0]),
+        trans_afin(np.array([1, 0]), np.pi/2, [1, 1], [0, 0]),
         np.array([0, 1])
     ))
     assert(np.allclose(
@@ -69,3 +70,6 @@ def run():
         trans_afin(np.array([1, 0]), np.pi/2, [3, 2], [4, 5]),
         np.array([4, 7])
     ))
+
+
+run()

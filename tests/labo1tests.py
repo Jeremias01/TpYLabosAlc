@@ -25,3 +25,5 @@ def run():
     assert not matricesIguales(np.array([[1, 2], [3, 4]]).T, np.array([[1, 2], [3, 4]]))
     
     print("All tests passed")
+
+run()

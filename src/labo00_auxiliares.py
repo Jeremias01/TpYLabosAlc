@@ -64,6 +64,10 @@ def traspuesta(A):
         res.append(fila_trasp)
     return np.array(res)
 
+def traspuestaPorOtraDiagonal(A):
+    raise NotImplementedError
+
+
 def prodint(v1,v2):  #prod int definido para vectores de la misma long
     if(len(v1)==len(v2)):
         res=0

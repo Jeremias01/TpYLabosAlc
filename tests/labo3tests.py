@@ -80,3 +80,5 @@ def run():
     assert(np.allclose(normaA*normaA_,condA))
 
     print("All tests for labo3 passed") 
+
+run()

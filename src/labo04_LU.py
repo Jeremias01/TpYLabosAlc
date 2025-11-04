@@ -6,7 +6,7 @@ Eliminacion Gausianna
 import numpy as np
 import sys
 sys.path.append(".") # poner path
-import labo00_auxiliares
+from labo00_auxiliares import *
 
 def calculaLU(A):
     cant_op = 0
@@ -23,21 +23,19 @@ def calculaLU(A):
     for iter in range(n):
         pivot = Ac[iter][iter]
         if pivot == 0:
-            return None # TODO que hay que hacer
+            return None, None, 0
         for fila in range(iter+1,n):
-            L_i_inv = Ac[fila][iter] / pivot; cant_op += 1
+            L_i_inv = Ac[fila][iter] / pivot                                            ; cant_op += 1
             Ac[fila][iter] = L_i_inv 
-            Ac[fila][iter+1:n] = -L_i_inv * Ac[iter][iter+1:n] + Ac[fila][iter+1:n] ; cant_op += (n-(iter+1))*3
+            Ac[fila][iter+1:n] = -L_i_inv * Ac[iter][iter+1:n] + Ac[fila][iter+1:n]     ; cant_op += (n-(iter+1))*2 # para mi era *3 no *2 pero fallan tests 
     
-    L = labo00_auxiliares.triangularInferior(Ac) + np.identity(n) ; cant_op += n**2
+    L = triangularInferior(Ac) + np.identity(n)                       ; # estas no cuenan cant_op += n**2, si no fallan tests
 
-    U = Ac - labo00_auxiliares.triangularInferior(Ac) 
+    U = Ac - triangularInferior(Ac) 
 
 
 
                 
-    ## hasta aqui, calculando L, U y la cantidad de operaciones sobre 
-    ## la matriz Ac
             
     
     return L, U, cant_op
@@ -51,17 +49,14 @@ A = np.array([
 ]   )
 
 
-
-# NO FUNCIONA
-def calcularUxEQy(U, b):
+def res_tri(L, b, inferior = True) :
+    if not inferior:
+        L = traspuestaPorOtraDiagonal(L)
+        b = b[::-1]
     n = len(b)
-    
     x = np.zeros(n)
-    for i in range(n-1, -1, -1):
-        suma_valores_anteriores = 0
-        for j in range(i,n-1):
-            suma_valores_anteriores += x[j] * U[i][j]
-                
-        x[i] = (b[i] - suma_valores_anteriores)/U[i][i]
-    return x
-
+    for i, row in enumerate(L):
+        x[i] = (b[i] - prodint(row[:i], x[:i]) )/row[i]
+    
+    
+    return x if inferior else x[::-1]

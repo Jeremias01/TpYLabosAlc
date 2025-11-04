@@ -24,6 +24,7 @@ def run():
     assert(not np.allclose(U,U0))
     assert(np.allclose(L,L0,atol=1e-3))
     assert(np.allclose(U,U0,atol=1e-3))
+    print(nops)
     assert(nops == 13)
 
     L0 = np.array([[1,0,0],[1,1,0],[1,1,1]])
@@ -114,3 +115,5 @@ def run():
     assert(not esSDP(A))
     
     print("All tests for labo4 passed")
+
+run()

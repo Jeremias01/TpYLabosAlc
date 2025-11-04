@@ -13,6 +13,7 @@ Created on Tue Sep  9 11:32:39 2025
 
 
 import numpy as np
+from labo00_auxiliares import *
 
 
 a=np.cos(0)
@@ -35,7 +36,7 @@ escala([1,2,3,34,5,6])
 
 
 def rota_y_escala(theta,s):
-    res=escala(s) @ rota(theta) 
+    res = matmul(escala(s), rota(theta))
     return res
     
 rota_y_escala(pi/2,[1,2])
@@ -49,8 +50,8 @@ def afin(theta,s,b):
 xd=afin(pi/4,[1,2],[1,2])
 
 def trans_afin(v,theta,s,b):
-    mult= v + [1]
-    return afin(theta,s,b) @ mult
+    mult = v + [1]
+    return calcularAx(afin(theta,s,b), mult)
 
 trans_afin([1,0],pi/4,[1,2],[1,2])
 

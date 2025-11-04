@@ -136,3 +136,5 @@ def run():
 
     print("All tests for labo6 passed")
 
+
+run()

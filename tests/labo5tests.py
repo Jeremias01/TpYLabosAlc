@@ -60,3 +60,7 @@ def run():
     Q4c,R4c = calculaQR(A4,metodo='RH')
     check_QR(Q4c,R4c,A4)
     print("All tests for labo5 passed")
+
+
+
+run()
