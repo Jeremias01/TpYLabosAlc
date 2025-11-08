@@ -10,6 +10,7 @@ from labo03_normas import *
 from labo04_LU import *
 from labo05_QR import *
 from labo06_AVs import *
+from labo07_markov import *
 from labo08_SVD import *
 ### TODOS ESTOS IMPORTS SE VAN A TENER QUE REEMPLAZAR CON EL CODIGO ENTERO EN LA ENTREGA FINAL TODO
 
@@ -59,6 +60,7 @@ def pinvHouseHolder(Q, R, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
+    pass
 
 def pinvGramSchmidt(Q, R, Y):
     """
