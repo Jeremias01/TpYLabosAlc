@@ -28,16 +28,57 @@ def cargarDataset(carpeta):
     
     pass
 
+def cholesky(A):
+ L = np.zeros((len(A),len(A[0])))
+ 
+ for columna in range((len(A))):
+        suma = 0
+        for i in range(columna):
+            suma += (L[columna][i])**2
+        diagonal = np.sqrt(A[columna][columna]- suma)
+        L[columna][columna] = diagonal
+
+        for fila in range(columna+1, len(A)):
+            suma = 0
+            for i in range(0,columna):
+                suma += L[fila][i] * L[columna][i]
+            L[fila][columna] = (A[fila][columna] - suma) / L[columna][columna]
+
+ return L
+
+def forward_sub(L, B):
+    p = L.shape[0]
+    Z = np.zeros((p, B.shape[1]))   
+
+    for i in range(p):               
+        for c in range(B.shape[1]):   
+            suma = 0.0
+            for k in range(i):       
+                suma += L[i][k] * Z[k][c]
+            Z[i][c] = (B[i][c] - suma) / L[i][i]
+
+    return Z
+
+def back_sub(U,Z):
+    p = U.shape[0]
+    V = np.zeros((p, Z.shape[1])) 
+
+    for i in range(p - 1, -1, -1):       
+        for c in range(Z.shape[1]):     
+            suma = 0.0
+            for k in range(i + 1, p):    
+                suma += U[i][k] * V[k][c]
+            V[i][c] = (Z[i][c] - suma) / U[i][i]
+
+    return V
+            
+         
 def pinvEcuacionesNormales(L, Y):
-    """
-    Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
-    la resolución de la pseudo-inversa usando el algoritmo 1 y descomposición cholesky. 
-    L: la matriz de Cholesky 
-    Y: la matriz de targets de entrenamiento.
-    retorna cálculo de los pesos W
-    """
-    
-    pass
+   Z = forward_sub(L, traspuesta())
+   Xp = back_sub(L.T, Z)
+   W = Y @ Xp
+   return W
+   
 
 def pinvSVD(U, S, V, Y):
     """ 
