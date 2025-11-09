@@ -6,13 +6,22 @@ Eliminacion Gausianna
 from typing import Text
 import numpy as np
 import sys
+
+from labo01_errores_igualdad import esSimetrica
 sys.path.append(".") # poner path
+sys.path.append("src") 
 from labo00_auxiliares import *
 
 def calculaLU(A):
+    """
+    Calcula la factorizacion LU de la matriz A y retorna las matrices L
+    y U, junto con el numero de operaciones realizadas. En caso de
+    que la matriz no pueda factorizarse retorna Nones.
+    """
     cant_op = 0
-    m=A.shape[0]
-    n=A.shape[1]
+    A = np.array(A)
+    m = A.shape[0]
+    n = A.shape[1]
     Ac = A.copy()
     
     if m!=n:
@@ -34,10 +43,6 @@ def calculaLU(A):
 
     U = Ac - triangularInferior(Ac) 
 
-
-
-                
-            
     
     return L, U, cant_op
 
@@ -51,6 +56,11 @@ A = np.array([
 
 
 def res_tri(L, b, inferior = True) :
+    """
+    Resuelve el sistema Lx = b, donde L es triangular. Se puede indicar
+    si es triangular inferior o superior usando el argumento
+    inferior (por default asumir que es triangular inferior).
+    """
     if not inferior:
         L = rotar180(L)
         b = b[::-1]
@@ -64,6 +74,53 @@ def res_tri(L, b, inferior = True) :
 
 
 
-def inv_tri(A, inferior = True):
-    
-    pass
+def res_LU(L,U, b):
+    y = res_tri(L,b)
+    x = res_tri(U,y, inferior=False)
+    return x
+
+def inversa(A):
+    """
+    Calcula la inversa de A empleando la factorizacion LU
+    y las funciones que resuelven sistemas triangulares
+    retorna None si no es inversible
+    """
+    A = np.array(A)
+    L,U,_ = calculaLU(A)
+    if L is None or U is None:
+        return None
+    res = np.identity(A.shape[0])
+    for i in range(len(res)):
+        res[i] = res_LU(L,U,res[i])
+    return traspuesta(res) 
+
+def calculaLDV(A):
+    """
+    Calcula la factorizacion LDV de la matriz A, de forma tal que A =
+    LDV, con L triangular inferior, D diagonal y V triangular
+    superior. En caso de que la matriz no pueda factorizarse
+    retorna None.
+    Ademas devuelve la cantidad de operaciones realizadas
+    Devuleve 
+    """
+    L,U,opA = calculaLU(A)
+    if L is None or U is None:
+        return None,None,None,0
+    V,D,opU = calculaLU(traspuesta(U))
+    return L,D,traspuesta(V),opA+opU
+
+def esSDP(A, atol=1e-8) :
+    """
+    Checkea si la matriz A es simetrica definida positiva (SDP) usando
+    la factorizacion LDV.
+    """
+    if not esSimetrica(A, atol):
+        return False
+    L,D,V,_ = calculaLDV(A)
+    if L is None or D is None or V is None:
+        return False
+    for i in range(A.shape[0]):
+        if A[i][i] <= 0:
+            return False
+
+    return True
