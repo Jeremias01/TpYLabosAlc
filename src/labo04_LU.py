@@ -19,7 +19,7 @@ def calculaLU(A):
     que la matriz no pueda factorizarse retorna Nones.
     """
     cant_op = 0
-    A = np.array(A)
+    A = np.array(A, dtype=float)
     m = A.shape[0]
     n = A.shape[1]
     Ac = A.copy()
@@ -85,7 +85,7 @@ def inversa(A):
     y las funciones que resuelven sistemas triangulares
     retorna None si no es inversible
     """
-    A = np.array(A)
+    A = np.array(A, dtype=float)
     L,U,_ = calculaLU(A)
     if L is None or U is None:
         return None
