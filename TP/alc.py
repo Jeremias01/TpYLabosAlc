@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import os
 sys.path.append(".") 
 sys.path.append("../src") 
 sys.path.append("./src") 
@@ -17,21 +18,26 @@ def cargarDataset(carpeta):
     """
     carpeta: un string con dirección a la carpeta con datos de entrenamiento
     retorna matrices Xt, Yt, Xv, Yv. 
-    Las matrices (Xt, Yt) corresponden a los ejemplos de entrenamiento conteniendo
-    los embeddings de los gatos y perros juntos. 
-    Cada columna de la matriz corresponde a un embedding. 
-    La matriz Yt debe generarse a partir de la lectura de los archivos de entrenamiento.
-    Cada columna de Yt tiene 2 elementos valiendo 0 o 1 dependiendo de la clase 
-    a la que pertenece el embedding. 
+    Las matrices (Xt, Yt) corresponden a los ejemplos de entrenamiento conteniendo los embeddings de
+    los gatos y perros juntos. Cada columna de la matriz corresponde a un embedding. La matriz Yt
+    debe generarse a partir de la lectura de los archivos de entrenamiento. Cada columna de Yt tiene
+    2 elementos valiendo 0 o 1 dependiendo de la clase a la que pertenece el embedding. 
     Por ejemplo un yi de un gato debería ser yi = [1, 0]T , y otro de un perro: yj = [0, 1]T .
     """
-    
-    pass
+    # poco claro. creo que pide que haga esto. 
+    prefix = ""
+    if os.getcwd()[-3:] != "/TP":
+        prefix = "TP/"
+    Xv = np.load(f'{prefix}cats_and_dogs/val/cats/efficientnet_b3_embeddings.npy')
+    Xt = np.load(f'{prefix}cats_and_dogs/train/cats/efficientnet_b3_embeddings.npy')
+    Yv = np.load(f'{prefix}cats_and_dogs/val/dogs/efficientnet_b3_embeddings.npy')
+    Yt = np.load(f'{prefix}cats_and_dogs/train/dogs/efficientnet_b3_embeddings.npy')
+    return Xt, Yt, Xv, Yv
 
 def cholesky(A):
- L = np.zeros((len(A),len(A[0])))
+    L = np.zeros((len(A),len(A[0])))
  
- for columna in range((len(A))):
+    for columna in range((len(A))):
         suma = 0
         for i in range(columna):
             suma += (L[columna][i])**2
@@ -44,7 +50,7 @@ def cholesky(A):
                 suma += L[fila][i] * L[columna][i]
             L[fila][columna] = (A[fila][columna] - suma) / L[columna][columna]
 
- return L
+    return L
 
 def forward_sub(L, B):
     p = L.shape[0]
@@ -74,10 +80,17 @@ def back_sub(U,Z):
             
          
 def pinvEcuacionesNormales(L, Y):
-   Z = forward_sub(L, traspuesta())
-   Xp = back_sub(L.T, Z)
-   W = Y @ Xp
-   return W
+    """
+    Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
+    la resolución de la pseudo-inversa usando el algoritmo 1 y descomposición cholesky. 
+    L: la matriz de Cholesky 
+    Y: la matriz de targets de entrenamiento.
+    retorna cálculo de los pesos W
+    """
+    Z = forward_sub(L, traspuesta())
+    Xp = back_sub(L.T, Z)
+    W = matmul(Y,  Xp)
+    return W
    
 
 def pinvSVD(U, S, V, Y):
@@ -100,6 +113,8 @@ def pinvHouseHolder(Q, R, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
+    4
+
 
 def pinvGramSchmidt(Q, R, Y):
     """

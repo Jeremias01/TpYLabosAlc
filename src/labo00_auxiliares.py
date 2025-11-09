@@ -80,6 +80,9 @@ def traspuestaPorOtraDiagonal(A):
 
     return res
 
+def rotar180(A):
+    return [row[::-1] for row in A][::-1]
+
 
 def prodint(v1,v2):  #prod int definido para vectores de la misma long
     if(len(v1)==len(v2)):

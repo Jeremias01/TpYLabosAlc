@@ -3,6 +3,7 @@
 """
 Eliminacion Gausianna
 """
+from typing import Text
 import numpy as np
 import sys
 sys.path.append(".") # poner path
@@ -51,7 +52,7 @@ A = np.array([
 
 def res_tri(L, b, inferior = True) :
     if not inferior:
-        L = traspuestaPorOtraDiagonal(L)
+        L = rotar180(L)
         b = b[::-1]
     n = len(b)
     x = np.zeros(n)
@@ -60,3 +61,9 @@ def res_tri(L, b, inferior = True) :
     
     
     return x if inferior else x[::-1]
+
+
+
+def inv_tri(A, inferior = True):
+    
+    pass
