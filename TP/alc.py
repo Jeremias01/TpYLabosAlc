@@ -14,6 +14,8 @@ from labo06_AVs import *
 from labo08_SVD import *
 ### TODOS ESTOS IMPORTS SE VAN A TENER QUE REEMPLAZAR CON EL CODIGO ENTERO EN LA ENTREGA FINAL TODO
 
+
+
 def cargarDataset(carpeta):
     """
     carpeta: un string con dirección a la carpeta con datos de entrenamiento
@@ -34,6 +36,7 @@ def cargarDataset(carpeta):
     Yt = np.load(f'{prefix}cats_and_dogs/train/dogs/efficientnet_b3_embeddings.npy')
     return Xt, Yt, Xv, Yv
 
+# Esta funcion obtiene la matriz L (Lower) utilizada al factorizar por Cholesky de la forma A = L*L^t
 def cholesky(A):
     L = np.zeros((len(A),len(A[0])))
  
@@ -52,7 +55,9 @@ def cholesky(A):
 
     return L
 
-def forward_sub(L, B):
+# Esta funcion la utilizamos para obtener Z, nos interesa obtener Z para resolver la ecuacion L*Z = X^t
+
+def sustitucion_adelante(L, B):
     p = L.shape[0]
     Z = np.zeros((p, B.shape[1]))   
 
@@ -65,7 +70,8 @@ def forward_sub(L, B):
 
     return Z
 
-def back_sub(U,Z):
+# Esta funcion nos permite obtener X^+ utilizando el Z obtenido por la funcion anterior, esto se obtiene a partir de la ecuacion L^t * X^+ = Z
+def sustitucion_atras(U,Z):
     p = U.shape[0]
     V = np.zeros((p, Z.shape[1])) 
 
@@ -78,7 +84,7 @@ def back_sub(U,Z):
 
     return V
             
-         
+#Esta funcion toma L (cholesky), Y y calcula W usando dos sustituciones: una para llegar a Z y otra para llegar a la pseudo–inversa X^+.        
 def pinvEcuacionesNormales(L, Y):
     """
     Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
@@ -87,9 +93,9 @@ def pinvEcuacionesNormales(L, Y):
     Y: la matriz de targets de entrenamiento.
     retorna cálculo de los pesos W
     """
-    Z = forward_sub(L, traspuesta())
-    Xp = back_sub(L.T, Z)
-    W = matmul(Y,  Xp)
+    Z = sustitucion_adelante(L, Xt)
+    Xp = sustitucion_atras(L.T, Z)
+    W = Y @ Xp
     return W
    
 
