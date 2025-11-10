@@ -1,3 +1,6 @@
+import numpy as np
+import copy
+
 def svd_reducida(A, k = "max", tol = 1e-15):
     """
     A la matriz de interes (de m x n)
@@ -27,3 +30,19 @@ def svd_reducida(A, k = "max", tol = 1e-15):
 
 
     # No esta testeada
+
+def svd_completa(A, tol = 1e-15):
+    V,sigma=diagRH(A,tol)
+    B=matmul(A,V)
+    normalizado=[]
+    suma=np.zeros(len(B[0]))
+    for i in traspuesta(B):
+        if(norma(i,2)!=0):
+            normalizado.append(i/norma(i,2))
+    ceros=np.zeros(len(B)-len(normalizado))
+    if(len(normalizado)<len(B)-1):
+        ceros[0]=1
+        normalizado.append(normalizado[0]-proyectar(ceros,normalizado[0]))
+        ceros[0]=0
+        for i in range(len(normalizado),len(B)-1):            
+            
