@@ -48,7 +48,7 @@ def metpot2k(A, tol =10**(-15) ,K=1000):
 
 #def reflectorHouseholder(v): # pq es correcto esto? parece raro
 #    n = len(v)
-#    idn = np.identity(n)
+#    idn = identidad(n)
 #    uut = matmul([idn[0]-v], [idn[0]-v])
 #   return idn - 2 * (uut / norma(uut,2))
 
@@ -67,7 +67,7 @@ def diagRH(A, tol =10**(-15) ,K=1000):
     n = len(A)
 
     v,aVal,_ = metpot2k(A,tol,K)
-    e1_menos_v = np.identity(n)[0] - v
+    e1_menos_v = identidad(n)[0] - v
     Hv = houseHolder( e1_menos_v / norma(e1_menos_v, 2))
     if n == 2:
         S_matriz_avecs = Hv

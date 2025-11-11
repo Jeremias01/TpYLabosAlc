@@ -39,7 +39,7 @@ def calculaLU(A):
             Ac[fila][iter] = L_i_inv 
             Ac[fila][iter+1:n] = -L_i_inv * Ac[iter][iter+1:n] + Ac[fila][iter+1:n]     ; cant_op += (n-(iter+1))*2 # para mi era *3 no *2 pero fallan tests 
     
-    L = triangularInferior(Ac) + np.identity(n)                       ; # estas no cuenan cant_op += n**2, si no fallan tests
+    L = triangularInferior(Ac) + identidad(n)                       ; # estas no cuenan cant_op += n**2, si no fallan tests
 
     U = Ac - triangularInferior(Ac) 
 
@@ -72,12 +72,30 @@ def res_tri(L, b, inferior = True) :
     
     return x if inferior else x[::-1]
 
+def res_tri_mat(L, B, inferior = True):
+    """
+    Resuelve el sistema LX = B, 
+    Recibe L triangular, superior o inferior segun parametro inferior, y B.
+    Devuelve X, la matriz solucion. 
+    """
+    if L.shape[0] != L.shape[0]:
+        return None 
+    res = np.zeros((L.shape[1], B.shape[0]))
+    for i,col in enumerate(B.T):
+        res[:,i] = res_tri(L, col, inferior)
+    return res
 
 
 def res_LU(L,U, b):
     y = res_tri(L,b)
     x = res_tri(U,y, inferior=False)
     return x
+
+def res_LU_mat(L,U, B):
+    Y = res_tri_mat(L,B)
+    X = res_tri_mat(U,Y, inferior=False)
+    return X
+
 
 def inversa(A):
     """
@@ -89,7 +107,7 @@ def inversa(A):
     L,U,_ = calculaLU(A)
     if L is None or U is None:
         return None
-    res = np.identity(A.shape[0])
+    res = identidad(A.shape[0])
     for i in range(len(res)):
         res[i] = res_LU(L,U,res[i])
     return traspuesta(res) 

@@ -53,7 +53,7 @@ def QR_con_GS(A,tol=1e-12,retorna_nops=False):
 def houseHolder(u):
     # precondición: u tal que ||u||_2 = 1
     mMenosK = len(u) 
-    return np.identity(mMenosK) - 2 * matmul(matCol(u), matFila(u))
+    return identidad(mMenosK) - 2 * matmul(matCol(u), matFila(u))
 
 
 
@@ -68,11 +68,11 @@ def QR_con_HH(A,tol=1e-12):
         return None
     
     R = A.astype(np.float64)
-    Q = np.identity(m)
+    Q = identidad(m)
     for k in range(0,n):
         x = R[k:, k]
         alpha = - sign(x[0]) * norma(x, 2)     # doble negacion redundante??
-        u = x - alpha * np.identity(m-k)[0]
+        u = x - alpha * identidad(m-k)[0]
         if (unorma := norma(u, 2)) > tol:
             u = u / unorma
             Hk =  houseHolder(u)

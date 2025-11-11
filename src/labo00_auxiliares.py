@@ -121,3 +121,9 @@ def proyectar(v,u):
     if(norma(v,2)!=0 and norma(u,2)!=0):
         return prodint(prodint(v,u)/prodint(u,u),u)
     else: return np.zeros(len(v))
+
+def identidad(n):
+    res = np.zeros((n,n))
+    for i in range(n):
+        res[i][i] = 1
+    return res

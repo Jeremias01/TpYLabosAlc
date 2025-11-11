@@ -40,6 +40,11 @@ def run():
     A4 = [[1, 0], [0, 2]]
     A5 = [[1, 0], [0, -2]]
     A3 = [[0, 1], [-1, 0]]
+    A1 = np.array(A1).astype(np.float64)
+    A2 = np.array(A2).astype(np.float64)
+    A3 = np.array(A3).astype(np.float64)
+    A4 = np.array(A4).astype(np.float64)
+    A5 = np.array(A5).astype(np.float64)
     
     A4AVMayor = metpot2k(A4, tol =10**(-15) ,K=1000)
     A5AVMayor = metpot2k(A5, tol =10**(-15) ,K=1000)

@@ -27,14 +27,30 @@ def cargarDataset(carpeta):
     2 elementos valiendo 0 o 1 dependiendo de la clase a la que pertenece el embedding. 
     Por ejemplo un yi de un gato debería ser yi = [1, 0]T , y otro de un perro: yj = [0, 1]T .
     """
-    # poco claro. creo que pide que haga esto. 
+    # Esta parte de PREFIX se tiene que borrar cuando ya este todo funcionando para la entrega final TODO 
+    
     prefix = ""
     if os.getcwd()[-3:] != "/TP":
-        prefix = "TP/"
-    Xv = np.load(f'{prefix}cats_and_dogs/val/cats/efficientnet_b3_embeddings.npy')
-    Xt = np.load(f'{prefix}cats_and_dogs/train/cats/efficientnet_b3_embeddings.npy')
-    Yv = np.load(f'{prefix}cats_and_dogs/val/dogs/efficientnet_b3_embeddings.npy')
-    Yt = np.load(f'{prefix}cats_and_dogs/train/dogs/efficientnet_b3_embeddings.npy')
+        prefix = "TP"
+
+    XvCats = np.load(f'{os.getcwd()}{prefix}/{carpeta}/val/cats/efficientnet_b3_embeddings.npy')
+    XtCats = np.load(f'{os.getcwd()}{prefix}/{carpeta}/train/cats/efficientnet_b3_embeddings.npy')
+    XvDogs = np.load(f'{os.getcwd()}{prefix}/{carpeta}/val/dogs/efficientnet_b3_embeddings.npy')
+    XtDogs = np.load(f'{os.getcwd()}{prefix}/{carpeta}/train/dogs/efficientnet_b3_embeddings.npy')
+
+    Xv = np.concatenate((XvDogs, XvCats), 1)    
+    Xt = np.concatenate((XtDogs, XtCats), 1)    
+
+    #TODO no se cual es 1 0 y cual es 0 1
+    YvCats = np.concatenate(tuple([[1],[0]] for x in range(XvCats.shape[1])),1)
+    YvDogs = np.concatenate(tuple([[0],[1]] for x in range(XvDogs.shape[1])),1)
+    YtCats = np.concatenate(tuple([[1],[0]] for x in range(XtCats.shape[1])),1)
+    YtDogs = np.concatenate(tuple([[0],[1]] for x in range(XtDogs.shape[1])),1)
+
+    Yv = np.concatenate((YvDogs, YvCats), 1)    
+    Yt = np.concatenate((YtDogs, YtCats), 1)    
+
+
     return Xt, Yt, Xv, Yv
 
 # Esta funcion obtiene la matriz L (Lower) utilizada al factorizar por Cholesky de la forma A = L*L^t
@@ -84,7 +100,9 @@ def sustitucion_atras(U,Z):
             V[i][c] = (Z[i][c] - suma) / U[i][i]
 
     return V
-            
+
+
+#TODO che no tenemos permitido usar .T ni @
 #Esta funcion toma L (cholesky), Y y calcula W usando dos sustituciones: una para llegar a Z y otra para llegar a la pseudo–inversa X^+.        
 def pinvEcuacionesNormales(L, Y):
     """
@@ -113,6 +131,12 @@ def pinvSVD(U, S, V, Y):
     
     pass
 
+def pinvQR(Q,R,Y):
+    VT = res_tri_mat(R, traspuesta(Q))
+    V = traspuesta(VT)
+    return matmul(Y,V)
+
+
 def pinvHouseHolder(Q, R, Y):
     """
     Q: Matriz ortonormal de QR, calculada con HouseHolder
@@ -120,7 +144,8 @@ def pinvHouseHolder(Q, R, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
-    pass
+    pinvQR(Q,R,Y)
+
 
 def pinvGramSchmidt(Q, R, Y):
     """
@@ -130,12 +155,21 @@ def pinvGramSchmidt(Q, R, Y):
     retorna pesos W
     """
     
-    pass
+    pinvQR(Q,R,Y)
 
-def esPseudoInverda(X, pX, tol=1e-8):
+def esPseudoInversa(X, pX, tol=1e-8):
     """
     X: matrix
     pX: matrix
     retorna True si y solo si las X y xP verifican las condiciones de Moore-Penrose 
     """
-    pass
+    XpX = matmul(X, pX)
+    pXX = matmul(pX, X)
+    
+    pasa_condiciones = True
+    pasa_condiciones &= matricesIguales( matmul(XpX, X)  ,  X )
+    pasa_condiciones &= matricesIguales( matmul(pXX, pX) ,  pX )
+    pasa_condiciones &= esSimetrica( XpX )
+    pasa_condiciones &= esSimetrica( pXX )
+    
+    return pasa_condiciones

@@ -112,7 +112,7 @@ def run():
     D0 = np.diag([1,1,1])
     V0 = np.array([[1,0,0],[1,1,0],[1,1+1e-10,1]]).T
     A = L0 @ D0 @ V0
-    assert(not esSDP(A))
+    assert(not esSDP(A, 1e-10)) # cambie este assert pq la tolerancia normal estaba mal
     
     print("All tests for labo4 passed")
 
