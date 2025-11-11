@@ -12,7 +12,6 @@ from labo04_LU import *
 from labo05_QR import *
 from labo06_AVs import *
 from labo07_markov import *
-from labo08_SVD import *
 ### TODOS ESTOS IMPORTS SE VAN A TENER QUE REEMPLAZAR CON EL CODIGO ENTERO EN LA ENTREGA FINAL TODO
 import numpy as np
 import copy
@@ -24,28 +23,47 @@ def svd_reducida(A, k = "max", tol = 1e-15):
     tol la tolerancia para considerar un valor singular igual a cero
     Retorna hatU (matriz de m x k),hatSig (vector de k valores singulares) y hatV (matriz de n x k)
     """
-
     if(k=="max"):
         k=len(A)
-    matriz=matmul(traspuesta(A), A)
+    if(len(A)>=len(A[0])):
+        matriz=matmul(traspuesta(A), A)
+        Avects, Avals=diagRH(matriz)
 
-    Avects, Avals=diagRH(matriz)
+        hatSig=np.zeros(k)
+        contador=0
+        for i in range(len(Avals)):
+            if(Avals[i][i]>=tol and i<k):
+                hatSig[contador]=np.sqrt(Avals[i][i])
+                contador+=1
+        if(contador<k):
+            for i in range(k-len(hatSig)):
+                hatSig[i]=0
+                
+        hatV=np.zeros((len(A[0]),k))
+        for i in range(k):
+            hatV[:,i] = Avects[i]
 
-    hatSig=np.zeros(k)
-    contador=0
-    for i in range(len(Avals)):
-        if(Avals[i][i]>=tol and i<k):
-            hatSig[contador]=np.sqrt(Avals[i][i])
-            contador+=1
-    if(contador<k):
-        for i in range(k-len(hatSig)):
-            hatSig[i]=0
-            
-    hatV=np.zeros((len(A[0]),k))
-    for i in range(k):
-        hatV[:,i] = Avects[i]
+        hatU=matmul(A,hatV)/norma(matmul(A,hatV),2)
+    else:         
+        matriz=matmul(A,traspuesta(A))
+        Avects, Avals=diagRH(matriz)
 
-    hatU=matmul(A,hatV)/norma(matmul(A,hatV),2)
+        hatSig=np.zeros(k)
+        contador=0
+        for i in range(len(Avals)):
+            if(Avals[i][i]>=tol and i<k):
+                hatSig[contador]=np.sqrt(Avals[i][i])
+                contador+=1
+        if(contador<k):
+            for i in range(k-len(hatSig)):
+                hatSig[i]=0
+                
+        hatU=np.zeros((len(A[0]),k))
+        for i in range(k):
+            hatU[:,i] = Avects[i]
+        hatU=traspuesta(hatU)
+
+        hatV=matmul(traspuesta(hatU),A)/traspuesta(norma(traspuesta(hatU),A))
 
     return hatU, hatSig, hatV
 
