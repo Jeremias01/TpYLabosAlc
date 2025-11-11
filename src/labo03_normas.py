@@ -43,6 +43,7 @@ import sys
 sys.path.append(".") 
 
 from labo00_auxiliares import *
+from labo04_LU import inversa
 
 # calcula norma p de un vector x, vale usar ´inf´
 def norma(x, p):
@@ -121,9 +122,9 @@ def normaExacta(A, p=[1, 'inf']):
 
 def condMC(A,p, Np):
     norma_A = normaMatMC(A, p, p, Np)
-    norma_Inversa = normaMatMC(np.linalg.inv(A), p, p, Np)
+    norma_Inversa = normaMatMC(inversa(A), p, p, Np)
     return norma_A[0] * norma_Inversa[0]
 
 
 def condExacta(A,p):
-  return normaExacta(A,p)*normaExacta(np.linalg.inv(A),p)
+  return normaExacta(A,p)*normaExacta(inversa(A),p)

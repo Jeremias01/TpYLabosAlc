@@ -65,7 +65,23 @@ def traspuesta(A):
     return np.array(res)
 
 def traspuestaPorOtraDiagonal(A):
-    raise NotImplementedError
+    mid=np.zeros((len(A),len(A[0])))
+    res=np.zeros((len(A),len(A[0])))
+    
+    for i in range(len(A)):
+        for j in range(len(A[0])):
+            mid[i][j]=A[j][len(A[0])-1-i]
+
+    mid=traspuesta(mid)
+
+    for i in range(len(A)):
+        for j in range(len(A[0])):
+            res[i][j]=mid[len(A)-1-j][i]
+
+    return res
+
+def rotar180(A):
+    return [row[::-1] for row in A][::-1]
 
 
 def prodint(v1,v2):  #prod int definido para vectores de la misma long

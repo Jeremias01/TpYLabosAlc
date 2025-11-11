@@ -23,17 +23,17 @@ def error_relativo(x,y):
   return n
 
 
-def matricesIguales(A,B):
+def matricesIguales(A,B, atol=epsilon):
    if len(A) != len(B):
     return False
    
    for i in range(len(A)):
      for n in range(len(A)):
-       if error(A[i] [n] , B[i] [n]) > epsilon:
+       if error(A[i] [n] , B[i] [n]) > atol:
          return False
        
    return True
 
 # no esta en el labo pero seria raro ponerla en el labo00
-def esSimetrica(A):
-    return matricesIguales(A, traspuesta(A))
+def esSimetrica(A, atol=epsilon):
+    return matricesIguales(A, traspuesta(A), atol)
