@@ -5,7 +5,7 @@ sys.path.append(".")
 from labo00_auxiliares import *
 
 
-epsilon = (10**(-15))
+epsilon = (10**(-14))
 def error(x, y):
     x = np.float64(x)
     y = np.float64(y)

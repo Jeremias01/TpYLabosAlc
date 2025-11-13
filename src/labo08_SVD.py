@@ -23,15 +23,19 @@ def svd_reducida(A, k = "max", tol = 1e-15):
     tol la tolerancia para considerar un valor singular igual a cero
     Retorna hatU (matriz de m x k),hatSig (vector de k valores singulares) y hatV (matriz de n x k)
     """
-    if(k=="max" or k>=len(A[0])):
-        k=len(A[0])
+
     ColMayorAFil=False
     if(len(A)<len(A[0])):
         A=traspuesta(A)
         ColMayorAFil=True
+
+
     matriz=matmul(traspuesta(A), A)
     Avects, Avals=diagRH(matriz)
 
+    if(k=="max"):
+        k=len(Avals)
+    
     hatSig=np.zeros(k)
     contador=0
     for i in range(len(Avals)):
@@ -44,11 +48,11 @@ def svd_reducida(A, k = "max", tol = 1e-15):
         for i in range(k-len(hatSig)):
             hatSig[i]=0
             
-    hatV=np.zeros((len(Avects),k))
+    hatV=np.zeros((len(A[0]),k))
     for i in range(k):
         hatV[:,i] = Avects[:,i]
 
-    hatU=np.zeros((len(A),len(hatV[0])))
+    hatU=np.zeros((len(A),k))
     for i in range(len(hatU[0])):
         hatU[:,i] = matmul(A,hatV)[:,i]/norma(matmul(A,hatV)[:,i],2)
 
@@ -82,12 +86,6 @@ def svd_reducida(A, k = "max", tol = 1e-15):
     #     hatV=matmul(traspuesta(hatU),A)/traspuesta(norma(traspuesta(hatU),A))
 
 
-
-a=[[1,2,3],[4,5,6],[7,8,9]]
-b=np.zeros((3,3))
-for i in range(len(b)):
-    b[i,:] = a[i]
-print(b)
 
 
 def svd_completa(A, tol = 1e-15):
