@@ -23,51 +23,65 @@ def svd_reducida(A, k = "max", tol = 1e-15):
     tol la tolerancia para considerar un valor singular igual a cero
     Retorna hatU (matriz de m x k),hatSig (vector de k valores singulares) y hatV (matriz de n x k)
     """
-    if(k=="max"):
-        k=len(A)
-    if(len(A)>=len(A[0])):
-        matriz=matmul(traspuesta(A), A)
-        Avects, Avals=diagRH(matriz)
+    if(k=="max" or k>=len(A[0])):
+        k=len(A[0])
+    ColMayorAFil=False
+    if(len(A)<len(A[0])):
+        A=traspuesta(A)
+        ColMayorAFil=True
+    matriz=matmul(traspuesta(A), A)
+    Avects, Avals=diagRH(matriz)
 
-        hatSig=np.zeros(k)
-        contador=0
-        for i in range(len(Avals)):
-            if(Avals[i][i]>=tol and i<k):
-                hatSig[contador]=np.sqrt(Avals[i][i])
-                contador+=1
-        if(contador<k):
-            for i in range(k-len(hatSig)):
-                hatSig[i]=0
-                
-        hatV=np.zeros((len(A[0]),k))
-        for i in range(k):
-            hatV[:,i] = Avects[i]
+    hatSig=np.zeros(k)
+    contador=0
+    for i in range(len(Avals)):
+        if(Avals[i][i]<tol):
+            break
+        if(i<k):
+            hatSig[i]=np.sqrt(Avals[i][i])
+        contador+=1
+    if(contador<k):
+        for i in range(k-len(hatSig)):
+            hatSig[i]=0
+            
+    hatV=np.zeros((len(Avects),k))
+    for i in range(k):
+        hatV[:,i] = Avects[:,i]
 
-        hatU=matmul(A,hatV)/norma(matmul(A,hatV),2)
-    else:         
-        matriz=matmul(A,traspuesta(A))
-        Avects, Avals=diagRH(matriz)
+    hatU=np.zeros((len(A),len(hatV[0])))
+    for i in range(len(hatU[0])):
+        hatU[:,i] = matmul(A,hatV)[:,i]/norma(matmul(A,hatV)[:,i],2)
 
-        hatSig=np.zeros(k)
-        contador=0
-        for i in range(len(Avals)):
-            if(Avals[i][i]>=tol and i<k):
-                hatSig[contador]=np.sqrt(Avals[i][i])
-                contador+=1
-        if(contador<k):
-            for i in range(k-len(hatSig)):
-                hatSig[i]=0
-                
-        hatU=np.zeros((len(A[0]),k))
-        for i in range(k):
-            hatU[:,i] = Avects[i]
-        hatU=traspuesta(hatU)
+    if(ColMayorAFil):
+        return hatV, hatSig, hatU
+    else: return hatU, hatSig, hatV
 
-        hatV=matmul(traspuesta(hatU),A)/traspuesta(norma(traspuesta(hatU),A))
-
-    return hatU, hatSig, hatV
 
     # No esta testeada
+
+
+    # else:         
+    #     matriz=matmul(A,traspuesta(A))
+    #     Avects, Avals=diagRH(matriz)
+
+    #     hatSig=np.zeros(k)
+    #     contador=0
+    #     for i in range(len(Avals)):
+    #         if(Avals[i][i]>=tol and i<k):
+    #             hatSig[contador]=np.sqrt(Avals[i][i])
+    #             contador+=1
+    #     if(contador<k):
+    #         for i in range(k-len(hatSig)):
+    #             hatSig[i]=0
+                
+    #     hatU=np.zeros((len(A[0]),k))
+    #     for i in range(k):
+    #         hatU[:,i] = Avects[i]
+    #     hatU=traspuesta(hatU)
+
+    #     hatV=matmul(traspuesta(hatU),A)/traspuesta(norma(traspuesta(hatU),A))
+
+
 
 a=[[1,2,3],[4,5,6],[7,8,9]]
 b=np.zeros((3,3))
