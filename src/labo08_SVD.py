@@ -60,8 +60,6 @@ def svd_reducida(A, k="max", tol=1e-15):
     else:
         return hatU, hatSig, hatV
 
-    # No esta testeada
-
     # else:
     #     matriz=matmul(A,traspuesta(A))
     #     Avects, Avals=diagRH(matriz)
@@ -93,23 +91,36 @@ def svd_completa(A, tol=1e-15):
     B = matmul(A, V)
     normalizado = []
     suma = np.zeros(len(B[0]))
-    for i in traspuesta(B):  # por cada i-esima columna
+    for i in traspuesta(B):  # por cada i-esima columna de B
         if norma(i, 2) != 0:
-            normalizado = normalizado.append(i / norma(i, 2))  # normalizo
-    while len(normalizado) < len(B):  # hasta que normalizado esté completo
-        canonica = np.zeros(len(normalizado))
-        for i in range(len(normalizado), len(B)):
-            if norma(normalizado[len(normalizado) - i], 2) != 0:
-                canonica[len(normalizado) - i] = 1  # creo el canonico
-                suma = suma + proyectar(
-                    canonica, normalizado[len(normalizado) - i]
-                )  # voy sumando las proyecciones del canonico en los vectores del espacio ortonormal hasta ahora
-                normalizado = normalizado.append(
-                    normalizado[len(normalizado) - i] - suma
-                )  # agrego un vector ortonormal
-                canonica[len(normalizado) - i] = 0  # reinicio a ceros el canonico
+            normalizado = normalizado.append(i / norma(i, 2))  # la normalizo y la paso a filas de B
+    normalizado=traspuesta(normalizado)  # filas de B a columnas 
 
-    U = normalizado  # cambio de nombre para el return
+
+    U = completar_ortonorm(normalizado,len(B))  # cambio de nombre para el return
     return U, Sigma, V
 
+
+def completar_ortonorm(matriz,num):
+    mat=copy.deepcopy(matriz)
+    while len(mat) < num:  # hasta que mat esté completo
+        canonica = np.zeros(num-len(mat))
+        if(len(mat)==0):
+            mat=identidad(num)
+        else:
+            for i in range(len(mat), num):            
+                if (norma(mat[i-len(mat)], 2) != 0):
+                    canonica[i-len(mat)] = 1  # creo el canonico
+                    suma = suma + proyectar(
+                        canonica, mat[i-len(mat)]
+                    )  # voy sumando las proyecciones del canonico en los vectores del espacio ortonormal hasta ahora
+                    mat = mat.append(
+                        mat[i-len(mat)] - suma
+                    )  # agrego un vector ortonormal
+
+                    canonica[len(i-len(mat))] = 0  # reinicio a ceros el canonico
+
+    return mat
+
     # No esta testeada
+    # problemas: si len(normalizado) es 0

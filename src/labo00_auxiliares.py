@@ -1,4 +1,10 @@
 import numpy as np
+sys.path.append(".")
+sys.path.append("../src")
+sys.path.append("./src")
+from labo01_errores_igualdad import *
+from labo02_TLs_basicas import *
+from labo03_normas import *
 
 def calcularAx(A,x):
     res = []
