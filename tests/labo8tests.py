@@ -21,15 +21,22 @@ def test_svd_reducida_mn(A,tol=1e-15):
     print(f"S nuestra:\n {hS} S NP:\n {np.round(nS, 2)}")
     assert len(hS) == len(nS[np.abs(nS)>tol]), 'Hay cantidades distintas de valores singulares en ' + str((m,n))
     assert np.all(np.abs(hS-nS[np.abs(nS)>tol])<10**r*tol), 'Hay diferencias en los valores singulares en ' + str((m,n))
-    print(f"A ex:\n {A} A nuestra:\n {hU @ np.diag(hS) @ traspuesta(hV)}")
+    # print(f"A ex:\n {A} A nuestra:\n {hU @ np.diag(hS) @ traspuesta(hV)}")
 
-    assert np.allclose(A, hU @ np.diag(hS) @ traspuesta(hV)), 'multiplicacion no da lo correcto ' + str((m,n))
+    assert np.allclose(A, hU @ np.diag(nS) @ traspuesta(hV)), 'multiplicacion no da lo correcto '
 
-    #print(f"V nuestra:\n {np.round(traspuesta(hV), 2)} V NP:\n {np.round(nVT, 2)}")
-    #print(f"V@VT nuestra:\n {np.round(nVT @ hV)}")
-    #assert np.all(np.abs(np.abs(np.diag(nVT @ hV))-1)<10**r*tol), 'Revisar calculo de hat V en ' + str((m,n))
-    #print(f"U nuestra:\n {np.round(hU, 2)} U NP:\n {np.round(nU, 2)}")
-    #assert np.all(np.abs(np.abs(np.diag(hU.T @ nU))-1)<10**r*tol), 'Revisar calculo de hat U en ' + str((m,n))
+    print(f"V nuestra:\n {np.round(traspuesta(hV), 2)} V NP:\n {np.round(hV, 2)}")
+    print(f"V@VT nuestra:\n {hV.T @ hV}")
+    # estas 2 lineas etan gpteadas
+    print(np.all(np.isclose(np.diag(hV.T @ hV), np.ones(hV.shape[1]), atol=1e-5)))
+    assert np.all(np.isclose(np.diag(hV.T @ hV), np.ones(hV.shape[1]), atol=1e-5))
+    assert np.all(np.isclose(np.diag(hV @ hV.T), np.ones(hV.shape[0]), atol=1e-5))
+
+    print(f"U nuestra:\n {np.round(hU, 2)} U NP:\n {np.round(hU, 2)}")
+    print(f"U@UT nuestra:\n {np.round(hU.T @ hU, 15)}")
+    print(np.abs(np.abs(np.diag(hU.T @ hU))-1).astype(str), 10**r*tol, np.abs(np.abs(np.diag(hU @ hU.T))-1)<10**r*tol)
+    assert np.all(np.isclose(np.abs(np.abs(np.diag(hU.T @ hU))-1), np.zeros(len(np.diag(hU.T @ hU))))), 'Revisar calculo de hat U en ' + str((m,n))
+    assert np.all(np.isclose(np.abs(np.abs(np.diag(hU @ hU.T))-1), np.zeros(len(np.diag(hU @ hU.T))))), 'Revisar calculo de hat U en ' + str((m,n))
 
 
 
