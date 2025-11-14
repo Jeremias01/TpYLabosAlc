@@ -7,9 +7,10 @@ from typing import Text
 import numpy as np
 import sys
 
-from labo01_errores_igualdad import esSimetrica
 sys.path.append(".") # poner path
-sys.path.append("src") 
+sys.path.append("../src") 
+sys.path.append("./src") 
+from labo01_errores_igualdad import esSimetrica
 from labo00_auxiliares import *
 
 def calculaLU(A):

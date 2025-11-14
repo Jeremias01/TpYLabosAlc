@@ -21,37 +21,37 @@ def QR_con_GS(A,tol=1e-12,retorna_nops=False):
     
 
     contador=0
-    Q=np.zeros((m,m))
-    R=np.zeros((m,n)) # R=np.zeros((k,n)) si no queres los 0s de mas
+    QT=np.zeros((n,m)) 
+    R=np.zeros((n,n)) # R=np.zeros((k,n)) si no queres los 0s de mas
     AColumnas = traspuesta(A).astype(np.float64)
 
     R[0][0]=norma(AColumnas[0],2)
 
     # definimos primer columna de Q como la primera de A normalizada
     if feq(R[0][0] , 0):
-        Q[0] = np.zeros((n))
+        QT[0] = np.zeros((n))
     else:
-        Q[0]=AColumnas[0]/R[0][0]
+        QT[0]=AColumnas[0]/R[0][0]
 
     # por cada columna que queda, 
     for j in range(1,n):
         print(f"ortonormalizando {j}-esimo vector a las {datetime.now(1).time()}", j) if j % 100 == 0 else ""
         Qj=AColumnas[j]
         for k in range(0,j):
-            R[k][j]=prodint(Q[k],Qj)
-            Qj+=-R[k][j]*Q[k]
+            R[k][j]=prodint(QT[k],Qj)
+            Qj+=-R[k][j]*QT[k]
         R[j][j]=norma(Qj,2)
 
         if feq(R[j][j] , 0):
-            Q[j] = np.zeros((n,))
+            QT[j] = np.zeros((n,))
         else:
-            Q[j]=Qj*(1/R[j][j])
+            QT[j]=Qj*(1/R[j][j])
     
     
     if retorna_nops :
-        return traspuesta(Q),R,contador
+        return traspuesta(QT),R,contador
     else: 
-        return traspuesta(Q),R 
+        return traspuesta(QT),R 
 
 
 #A=[[12,-51,4],[12,-52,4],[-4,24,-41]]
