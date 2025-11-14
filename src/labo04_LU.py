@@ -81,7 +81,7 @@ def res_tri_mat(L, B, inferior = True):
     """
     if L.shape[0] != B.shape[0]:
         return None 
-    res = np.zeros((L.shape[1], B.shape[0]))
+    res = np.zeros((L.shape[0], B.shape[1]))
     for i,col in enumerate(traspuesta(B)):
         res[:,i] = res_tri(L, col, inferior)
     return res

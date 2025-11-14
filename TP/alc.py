@@ -56,8 +56,11 @@ def cargarDataset(carpeta):
 
 def cargarDatasetReducido(carpeta, filas, columnas):
     Xt, Yt, Xv, Yv = cargarDataset(carpeta)
-    return Xt[:filas,:columnas], Yt[:,:columnas], Xv[:filas,:columnas], Yv[:,:columnas]
-
+    return (np.concatenate((Xt[:filas,:columnas], Xt[:filas,-columnas:]),1),
+            np.concatenate((Yt[:,:columnas] , Yt[:,-columnas:]),1),
+            np.concatenate((Xv[:filas,:columnas] , Xv[:filas,-columnas:]),1),
+            np.concatenate((Yv[:,:columnas] , Yv[:,-columnas:]),1),
+        )
 
 # Esta funcion obtiene la matriz L (Lower) utilizada al factorizar por Cholesky de la forma A = L*L^t
 def cholesky(A):
@@ -138,7 +141,6 @@ def pinvSVD(U, S, V, Y):
     pass
 
 def pinvQR(Q,R,Y):
-    print(R.shape, traspuesta(Q).shape)
     VT = res_tri_mat(R, traspuesta(Q), False)
     V = traspuesta(VT)
     return matmul(Y,V)

@@ -85,11 +85,13 @@ def QR_con_HH(A,tol=1e-12):
         if (unorma := norma(u, 2)) > tol:
             u = u / unorma
             Hk =  houseHolder(u)
-            for iter in range(k): # preguntar si podemos usar np.block
+            for iter in range(k): 
                 Hk = expandirDiagonalPrincipalDesdeArriba(Hk, 1)
             R = matmul(Hk, R)
             Q = matmul(Q, traspuesta(Hk))
-    return Q,R
+
+    #borramos filas y columnas redundantes antes de devolver
+    return Q[:,:n],R[:n,:]
 
 
 
