@@ -53,6 +53,12 @@ def cargarDataset(carpeta):
 
     return Xt, Yt, Xv, Yv
 
+
+def cargarDatasetReducido(carpeta, filas, columnas):
+    Xt, Yt, Xv, Yv = cargarDataset(carpeta)
+    return Xt[:filas,:columnas], Yt[:,:columnas], Xv[:filas,:columnas], Yv[:,:columnas]
+
+
 # Esta funcion obtiene la matriz L (Lower) utilizada al factorizar por Cholesky de la forma A = L*L^t
 def cholesky(A):
     L = np.zeros((len(A),len(A[0])))
@@ -132,7 +138,8 @@ def pinvSVD(U, S, V, Y):
     pass
 
 def pinvQR(Q,R,Y):
-    VT = res_tri_mat(R, traspuesta(Q))
+    print(R.shape, traspuesta(Q).shape)
+    VT = res_tri_mat(R, traspuesta(Q), False)
     V = traspuesta(VT)
     return matmul(Y,V)
 
@@ -144,7 +151,7 @@ def pinvHouseHolder(Q, R, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
-    pinvQR(Q,R,Y)
+    return pinvQR(Q,R,Y)
 
 
 def pinvGramSchmidt(Q, R, Y):
@@ -155,7 +162,7 @@ def pinvGramSchmidt(Q, R, Y):
     retorna pesos W
     """
     
-    pinvQR(Q,R,Y)
+    return pinvQR(Q,R,Y)
 
 def esPseudoInversa(X, pX, tol=1e-8):
     """
