@@ -32,10 +32,13 @@ def svd_reducida(A, k="max", tol=1e-15):
 
     matriz = matmul(traspuesta(A), A)
     Avects, Avals = diagRH(matriz)
+    # Problema: diahRH no es "reducida", tiene los AVals 0s y sus Avecs correspondientes. 
+    # Se los vamos a ir quitando, contandolos y reduciendo siempre con dimension min(k,i)
 
     if k == "max":
         k = len(Avals)
 
+    # nos quedamos con los sqrt(Avals) > 0. 
     hatSig = np.zeros(k)
     i = 0
     while i < k and Avals[i][i] > tol:
@@ -43,13 +46,14 @@ def svd_reducida(A, k="max", tol=1e-15):
         i += 1
     hatSig = hatSig[:i]
 
+    # diagRH nos da autovectores de A^*A ortonormales para V! 
     hatV = Avects[:, :min(k,i)]
+
 
     hatU = np.zeros((len(A), min(k,i)))
     for i in range(len(hatU[0])):
         hatU[:, i] = matmul(A, hatV)[:, i] / hatSig[i]
 
-    # eso que hace no entiendo TODO
     if ColMayorAFil:
         return hatV, hatSig, hatU
     else:
