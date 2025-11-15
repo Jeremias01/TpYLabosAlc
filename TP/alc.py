@@ -150,8 +150,12 @@ def pinvSVD(U, S, V, Y):
 
 def pinvQR(Q,R,Y):
     VT = res_tri_mat(R, traspuesta(Q), False)
+    print("listo resolviendo sistema")
     V = traspuesta(VT)
-    return matmul(Y,V)
+    print("listo trasponiendo")
+    W = matmul(Y,V)
+    print("Calculando W")
+    return W
 
 
 def pinvHouseHolder(Q, R, Y):
@@ -190,3 +194,7 @@ def esPseudoInversa(X, pX, tol=1e-8):
     pasa_condiciones &= esSimetrica( pXX )
     
     return pasa_condiciones
+
+
+
+
