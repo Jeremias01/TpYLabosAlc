@@ -1,10 +1,8 @@
 import numpy as np
+import sys
 sys.path.append(".")
 sys.path.append("../src")
 sys.path.append("./src")
-from labo01_errores_igualdad import *
-from labo02_TLs_basicas import *
-from labo03_normas import *
 
 def calcularAx(A,x):
     res = []
@@ -123,10 +121,7 @@ def matCol(v):
     return traspuesta([v])
 
 
-def proyectar(v,u):
-    if(norma(v,2)!=0 and norma(u,2)!=0):
-        return prodint(prodint(v,u)/prodint(u,u),u)
-    else: return np.zeros(len(v))
+
 
 def identidad(n):
     res = np.zeros((n,n))

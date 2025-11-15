@@ -128,3 +128,9 @@ def condMC(A,p, Np):
 
 def condExacta(A,p):
   return normaExacta(A,p)*normaExacta(inversa(A),p)
+
+
+def proyectar(v,u):
+    if(norma(v,2)!=0 and norma(u,2)!=0):
+        return prodint(prodint(v,u)/prodint(u,u),u)
+    else: return np.zeros(len(v))

@@ -7,9 +7,10 @@ from typing import Text
 import numpy as np
 import sys
 
-from labo01_errores_igualdad import esSimetrica
 sys.path.append(".") # poner path
-sys.path.append("src") 
+sys.path.append("../src") 
+sys.path.append("./src") 
+from labo01_errores_igualdad import esSimetrica
 from labo00_auxiliares import *
 
 def calculaLU(A):
@@ -80,7 +81,7 @@ def res_tri_mat(L, B, inferior = True):
     """
     if L.shape[0] != B.shape[0]:
         return None 
-    res = np.zeros((L.shape[1], B.shape[0]))
+    res = np.zeros((L.shape[0], B.shape[1]))
     for i,col in enumerate(traspuesta(B)):
         res[:,i] = res_tri(L, col, inferior)
     return res
