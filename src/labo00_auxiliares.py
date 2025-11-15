@@ -4,36 +4,27 @@ sys.path.append(".")
 sys.path.append("../src")
 sys.path.append("./src")
 
+#TODO posiblemente convenga vectorizar esto. repetir el vector n veces, multiplciar con * con la matrix, sumar cada columna? no se si eso numpy lo vectorizaria bien. si si, aceleraría mucho matmul
 def calcularAx(A,x):
-    res = []
-    for row in A:
-        res.append(0)
-        for a1, x1 in zip(row,x):
-            res[-1] += a1 * x1
+    res = np.zeros(len(x))
 
-    return np.array(res)
+    for i,row in enumerate(A):
+        res[i] = prodint(row, x, conj=False)
 
+    return res
 
-"""
-def calcularAx(A,x):
-  res = []
-  for i in range(len(A)):
-        v = 0
-        for j in range(len(A[0])):
-            v += x[j]*A[i][j]
-        res.append(v)
-  return res
-"""
 
 def matmul(A,B):
     rowcount = len(A)
     colcount = len(B[0])
-    valorquecoincide = len(B) # == len(A[0]) 
+
+    assert len(B) == len(A[0])
+
+    valorquecoincide = len(B)  
     res = np.zeros((rowcount, colcount))
     for r in range(rowcount):
         for c in range(colcount):
-            for k in range(valorquecoincide):
-                res[r][c] += A[r][k] * B[k][c]
+            res[r][c] = prodint( A[r],  B[:, c], conj=False)
     return res
 
 def triangularInferior(A):
@@ -60,13 +51,10 @@ def maximo(l):
    return res
 
 def traspuesta(A):
-    res = []
-    for j in range(len(A[0])):       
-        fila_trasp = []
-        for fila in A:
-            fila_trasp.append(fila[j])
-        res.append(fila_trasp)
-    return np.array(res)
+    res = np.zeros((A.shape[1], A.shape[0]))
+    for j, row in enumerate(A):       
+        res[:,j] = row
+    return res
 
 def traspuestaPorOtraDiagonal(A):
     mid=np.zeros((len(A),len(A[0])))
@@ -85,15 +73,16 @@ def traspuestaPorOtraDiagonal(A):
     return res
 
 def rotar180(A):
-    return [row[::-1] for row in A][::-1]
+    return np.array([row[::-1] for row in A][::-1])
 
 
-def prodint(v1,v2):  #prod int definido para vectores de la misma long
+def prodint(v1,v2, conj=True):  #prod int definido para vectores de la misma long
     if(len(v1)==len(v2)):
-        res=0
-        for i in range(len(v1)):
-            res+=np.conj(v1[i])*v2[i]
-        return res
+        if conj:
+            v1 = np.conj(v1)
+        v1conjv2 = v1*v2
+        
+        return np.sum(v1conjv2) #TODO preguntar si está bien usar sum, me imagino que si y que numpy lo implementa vectorizado
 
 
 def cuadrada(A):
@@ -115,10 +104,10 @@ def sign(n):
         return -1 
 
 def matFila(v):
-    return [v]
+    return np.array([v])
 
 def matCol(v):
-    return traspuesta([v])
+    return traspuesta(np.array([v]))
 
 
 

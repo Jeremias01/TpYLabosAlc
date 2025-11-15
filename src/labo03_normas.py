@@ -48,21 +48,11 @@ from labo04_LU import inversa
 # calcula norma p de un vector x, vale usar ´inf´
 def norma(x, p):
     if p != 'inf':
-     suma = 0
-     for i in range(len(x)):
-        n = x[i]
-        suma += abs(n)**p
-     res = suma**(1/p)
-     return res
+        return np.sum(np.pow(np.abs(x), p))**(1/p)
     
     if p == 'inf':
-       lista = []
-       for i in range(len(x)):
-          n = x[i].astype(float)
-          lista.append(abs(x[i]))
-       res = (maximo(lista))
+        return np.max(np.abs(x))
     
-    return (res)
 
 # normaliza una lista de vectores
 def normaliza(X,p):

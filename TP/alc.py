@@ -116,9 +116,9 @@ def sustitucion_atras(U,Z):
 def pinvEcuacionesNormales(L, Y):
     """
     Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
-    la resolución de la pseudo-inversa usando el algoritmo 1 y descomposición cholesky. 
+    la resolución de la psetargetsudo-inversa usando el algoritmo 1 y descomposición cholesky. 
     L: la matriz de Cholesky 
-    Y: la matriz de targets de entrenamiento.
+    Y: la matriz de  de entrenamiento.
     retorna cálculo de los pesos W
     """
     Z = sustitucion_adelante(L, Xt)
