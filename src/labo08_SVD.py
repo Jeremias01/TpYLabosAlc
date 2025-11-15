@@ -39,7 +39,7 @@ def svd_reducida(A, k="max", tol=1e-15):
     hatSig = np.zeros(k)
     contador = 0
     for i in range(len(Avals)):
-        if Avals[i][i] < tol:
+        if Avals[i][i] < tol:   # si uno es cero, los que le siguen tambien
             break
         if i < k:
             hatSig[i] = np.sqrt(Avals[i][i])
@@ -83,30 +83,39 @@ def svd_reducida(A, k="max", tol=1e-15):
 
 
 def svd_completa(A, tol=1e-15):
+
+    ColMayorAFil = False
+    if len(A) < len(A[0]):
+        A = traspuesta(A)
+        ColMayorAFil = True
+
     V, Avals = diagRH(matmul(traspuesta(A), A), tol)  # matriz de autovect y de avals
-    Sigma = []
+    Sigma = np.zeros(len(Avals))
     for i in range(len(Avals)):
-        if Avals[i][i] >= tol:
-            Sigma.append = np.sqrt(Avals[i][i])  # asigno a sigma sus valores singulares
+        if Avals[i][i] >= tol:               # si uno es cero, los que le siguen tambien
+            Sigma[i] = np.sqrt(Avals[i][i])  # asigno a sigma sus valores singulares
     B = matmul(A, V)
     normalizado = []
-    suma = np.zeros(len(B[0]))
+    
     for i in traspuesta(B):  # por cada i-esima columna de B
         if norma(i, 2) != 0:
-            normalizado = normalizado.append(i / norma(i, 2))  # la normalizo y la paso a filas de B
-    normalizado=traspuesta(normalizado)  # filas de B a columnas 
-
-
+            normalizado = normalizado.append(i / norma(i, 2))  # la normalizo y la paso a filas de normalizado
+    normalizado=traspuesta(normalizado)  # filas de noirmalizado a columnas 
     U = completar_ortonorm(normalizado,len(B))  # cambio de nombre para el return
-    return U, Sigma, V
+
+    if ColMayorAFil:
+        return V, Sigma, U          # si hay mas cols que filas, el proceso se invierte.
+    else:
+        return U, Sigma, V
 
 
 def completar_ortonorm(matriz,num):
     mat=copy.deepcopy(matriz)
+    suma = np.zeros(num)
     while len(mat) < num:  # hasta que mat esté completo
         canonica = np.zeros(num-len(mat))
         if(len(mat)==0):
-            mat=identidad(num)
+            mat=traspuesta(identidad(num))
         else:
             for i in range(len(mat), num):            
                 if (norma(mat[i-len(mat)], 2) != 0):
@@ -122,5 +131,4 @@ def completar_ortonorm(matriz,num):
 
     return mat
 
-    # No esta testeada
-    # problemas: si len(normalizado) es 0
+# No esta testeada

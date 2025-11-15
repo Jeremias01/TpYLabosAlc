@@ -134,8 +134,16 @@ def pinvSVD(U, S, V, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
+    S_ALaMenosUno = np.zeros((len(S),len(S[0])))
+    for i in len(S):
+        if S[i][i] >0:               # si uno es cero, los que le siguen tambien
+            S_ALaMenosUno[i][i] = (S[i][i])**(-1)
+    SigmaMas = traspuesta(S_ALaMenosUno[:,len(S)])
+    V1 = V[:,len(S)]
+    W = matmul(Y, matmul((V1, SigmaMas),traspuesta(U)))
+
+    return W
     
-    pass
 
 def pinvQR(Q,R,Y):
     print(R.shape, traspuesta(Q).shape)
