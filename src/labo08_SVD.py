@@ -32,54 +32,33 @@ def svd_reducida(A, k="max", tol=1e-15):
 
     matriz = matmul(traspuesta(A), A)
     Avects, Avals = diagRH(matriz)
+    # Problema: diahRH no es "reducida", tiene los AVals 0s y sus Avecs correspondientes. 
+    # Se los vamos a ir quitando, contandolos y reduciendo siempre con dimension min(k,i)
 
     if k == "max":
         k = len(Avals)
 
+    # nos quedamos con los sqrt(Avals) > 0. 
     hatSig = np.zeros(k)
-    contador = 0
-    for i in range(len(Avals)):
-        if Avals[i][i] < tol:   # si uno es cero, los que le siguen tambien
-            break
-        if i < k:
-            hatSig[i] = np.sqrt(Avals[i][i])
-        contador += 1
-    if contador < k:
-        hatSig = hatSig[:contador]
+    i = 0
+    while i < k and Avals[i][i] > tol:
+        hatSig[i] = np.sqrt(Avals[i][i])
+        i += 1
+    hatSig = hatSig[:i]
 
-    hatV = np.zeros((len(A[0]), k))
-    for i in range(k):
-        hatV[:, i] = Avects[:, i]
+    # diagRH nos da autovectores de A^*A ortonormales para V! 
+    hatV = Avects[:, :min(k,i)]
 
-    hatU = np.zeros((len(A), k))
+
+    hatU = np.zeros((len(A), min(k,i)))
     for i in range(len(hatU[0])):
-        hatU[:, i] = matmul(A, hatV)[:, i] / norma(matmul(A, hatV)[:, i], 2)
+        hatU[:, i] = matmul(A, hatV)[:, i] / hatSig[i]
 
     if ColMayorAFil:
         return hatV, hatSig, hatU
     else:
         return hatU, hatSig, hatV
 
-    # else:
-    #     matriz=matmul(A,traspuesta(A))
-    #     Avects, Avals=diagRH(matriz)
-
-    #     hatSig=np.zeros(k)
-    #     contador=0
-    #     for i in range(len(Avals)):
-    #         if(Avals[i][i]>=tol and i<k):
-    #             hatSig[contador]=np.sqrt(Avals[i][i])
-    #             contador+=1
-    #     if(contador<k):
-    #         for i in range(k-len(hatSig)):
-    #             hatSig[i]=0
-
-    #     hatU=np.zeros((len(A[0]),k))
-    #     for i in range(k):
-    #         hatU[:,i] = Avects[i]
-    #     hatU=traspuesta(hatU)
-
-    #     hatV=matmul(traspuesta(hatU),A)/traspuesta(norma(traspuesta(hatU),A))
 
 
 def svd_completa(A, tol=1e-15):

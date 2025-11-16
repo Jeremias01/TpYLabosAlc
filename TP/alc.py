@@ -116,9 +116,9 @@ def sustitucion_atras(U,Z):
 def pinvEcuacionesNormales(L, Y):
     """
     Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
-    la resolución de la pseudo-inversa usando el algoritmo 1 y descomposición cholesky. 
+    la resolución de la psetargetsudo-inversa usando el algoritmo 1 y descomposición cholesky. 
     L: la matriz de Cholesky 
-    Y: la matriz de targets de entrenamiento.
+    Y: la matriz de  de entrenamiento.
     retorna cálculo de los pesos W
     """
     Z = sustitucion_adelante(L, Xt)
@@ -131,27 +131,41 @@ def pinvSVD(U, S, V, Y):
     """ 
     Obtiene los pesos utilizando la Descomposición
     en Valores Singulares para la resolución de la pseudo-inversa usando el algoritmo 2. 
-    U: Matriz de autovectores por izquierda de SVD
-    S: Matriz Sigma de valores singulares
-    V: Matriz de autovectores por derecha de SVD
+    U: Matriz de autovectores por izquierda de SVD reducida
+    S: Vector Sigma de valores singulares 
+    V: Matriz de autovectores por derecha de SVD reducida
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
-    S_ALaMenosUno = np.zeros((len(S),len(S[0])))
-    for i in len(S):
-        if S[i][i] >0:               # si uno es cero, los que le siguen tambien
-            S_ALaMenosUno[i][i] = (S[i][i])**(-1)
-    SigmaMas = traspuesta(S_ALaMenosUno[:,len(S)])
-    V1 = V[:,len(S)]
-    W = matmul(Y, matmul((V1, SigmaMas),traspuesta(U)))
+    #S_ALaMenosUno = np.zeros((len(S),len(S[0])))
+    #for i in len(S):
+    #    if S[i][i] >0:               # si uno es cero, los que le siguen tambien
+    #        S_ALaMenosUno[i][i] = (S[i][i])**(-1)
+    #SigmaMas = traspuesta(S_ALaMenosUno[:,len(S)])
+    #V1 = V[:,len(S)]
+    #W = matmul(Y, matmul((V1, SigmaMas),traspuesta(U)))
+
+    # S solo contiene los Valores Singulares positivos
+    S_inv = np.pow(S, -1)
+    # Como tenemos S vector que representa una matriz diagonal, podemos hacer mas rápida la multiplicación
+    VS_inv = np.zeros(V.shape)
+    for i in range(V.shape[1]):
+        VS_inv[:, i] = V[:, i] * S[i]
+    
+    A_pseudoinv = matmul(VS_inv, traspuesta(U))
+    W = matmul(Y,A_pseudoinv)
 
     return W
     
 
 def pinvQR(Q,R,Y):
     VT = res_tri_mat(R, traspuesta(Q), False)
+    print("listo resolviendo sistema")
     V = traspuesta(VT)
-    return matmul(Y,V)
+    print("listo trasponiendo")
+    W = matmul(Y,V)
+    print("Calculando W")
+    return W
 
 
 def pinvHouseHolder(Q, R, Y):
@@ -190,3 +204,7 @@ def esPseudoInversa(X, pX, tol=1e-8):
     pasa_condiciones &= esSimetrica( pXX )
     
     return pasa_condiciones
+
+
+
+
