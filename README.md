@@ -7,6 +7,7 @@
 - [ ] preguntar si se puede usar np.clip, @ para teets 
 - [ ] preguntar si esta bien que sigma sea un vector en pinvSVD
 - [ ] preguntar pq el SVD de numpy devuelve mas columnas que el nuestro
+- [ ] fijarse de hacer una funcion de timer, y comparar los tiempos de todo
 
 
 

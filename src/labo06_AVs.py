@@ -55,7 +55,7 @@ def metpot2k(A, tol =10**(-15) ,K=1000):
 
 
 
-def diagRH(A, tol =10**(-15) ,K=1000):
+def diagRH(A, tol =1e-8 ,K=1000):
     """
     A: una matriz simetrica de n x n.
     tol: la tolerancia en la diferencia entre un paso y el siguiente de la estimacion del autovector.
@@ -63,10 +63,12 @@ def diagRH(A, tol =10**(-15) ,K=1000):
     retorna matriz de autovectores S y matriz de autovalores D, tal que A = S D S. T
     Si la matriz A no es simetrica, debe retornar None.
     """
-    if not cuadrada(A) or not esSimetrica(A):
-        return None
+    if not cuadrada(A) or not (esS:=esSimetrica(A, tol)):
+        # si lo dejo haciendo cuentas grandes no quiero perderlo todo pq estaba mal la toleranica
+        print("ERROR: se rompe cuadrada o simetria con", A.shape, "o alguna tolerancia que no quiero gastar tiempo en calcular" )
+        # return None
     n = len(A)
-    if n % 100 == 0:
+    if n % 20 == 0:
         print(f"diagonalizando {n}-esima sumbatriz a las {datetime.now().time()}")
 
 

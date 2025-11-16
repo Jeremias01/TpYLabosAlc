@@ -17,7 +17,7 @@ import numpy as np
 import copy
 
 
-def svd_reducida(A, k="max", tol=1e-15):
+def svd_reducida(A, k="max", tol=1e-8):
     """
     A la matriz de interes (de m x n)
     k el numero de valores singulares (y vectores) a retener.
@@ -31,7 +31,7 @@ def svd_reducida(A, k="max", tol=1e-15):
         ColMayorAFil = True
 
     matriz = matmul(traspuesta(A), A)
-    Avects, Avals = diagRH(matriz)
+    Avects, Avals = diagRH(matriz, tol)
     # Problema: diahRH no es "reducida", tiene los AVals 0s y sus Avecs correspondientes. 
     # Se los vamos a ir quitando, contandolos y reduciendo siempre con dimension min(k,i)
 
