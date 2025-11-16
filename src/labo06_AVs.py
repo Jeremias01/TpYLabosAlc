@@ -5,6 +5,7 @@ from labo00_auxiliares import *
 from labo01_errores_igualdad import *
 from labo03_normas import norma
 from labo05_QR import houseHolder
+from datetime import datetime
 
 
 def aplicarPotenciaUnaVez(A,v):
@@ -65,6 +66,9 @@ def diagRH(A, tol =10**(-15) ,K=1000):
     if not cuadrada(A) or not esSimetrica(A):
         return None
     n = len(A)
+    if n % 100 == 0:
+        print(f"diagonalizando {n}-esima sumbatriz a las {datetime.now().time()}")
+
 
     v,aVal,_ = metpot2k(A,tol,K)
     e1_menos_v = identidad(n)[0] - v

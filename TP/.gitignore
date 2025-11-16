@@ -11,3 +11,6 @@ WSVD.npy
 YvEsperadosGS.npy
 YvEsperadosHH.npy
 YvEsperadosSVD.npy
+LCholesky.npy
+WEN.npy
+YvEsperadosEqNorm.npy

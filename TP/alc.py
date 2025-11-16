@@ -13,6 +13,7 @@ from labo05_QR import *
 from labo06_AVs import *
 from labo07_markov import *
 from labo08_SVD import *
+from datetime import datetime
 ### TODOS ESTOS IMPORTS SE VAN A TENER QUE REEMPLAZAR CON EL CODIGO ENTERO EN LA ENTREGA FINAL TODO
 
 
@@ -67,16 +68,21 @@ def cholesky(A):
     L = np.zeros((len(A),len(A[0])))
  
     for columna in range((len(A))):
-        suma = 0
-        for i in range(columna):
-            suma += (L[columna][i])**2
+        if columna % 100 == 0:
+            print(f"choleskizando {columna}-esima columna a las {datetime.now().time()}")
+#        suma = 0
+        suma = np.sum(np.pow(L[columna],2))
+
+#        for i in range(columna):
+#            suma += (L[columna][i])**2
         diagonal = np.sqrt(A[columna][columna]- suma)
         L[columna][columna] = diagonal
 
         for fila in range(columna+1, len(A)):
-            suma = 0
-            for i in range(0,columna):
-                suma += L[fila][i] * L[columna][i]
+            suma = np.sum(L[fila][:columna] * L[columna][:columna])
+            #suma = 0
+            #for i in range(0,columna):
+            #    suma += L[fila][i] * L[columna][i]
             L[fila][columna] = (A[fila][columna] - suma) / L[columna][columna]
 
     return L

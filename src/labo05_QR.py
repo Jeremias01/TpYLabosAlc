@@ -35,7 +35,8 @@ def QR_con_GS(A,tol=1e-12,retorna_nops=False):
 
     # por cada columna que queda, 
     for j in range(1,n):
-        print(f"ortonormalizando {j}-esimo vector a las {datetime.now(1).time()}", j) if j % 100 == 0 else ""
+        if j % 100 == 0:
+            print(f"ortonormalizando {j}-esimo vector de {n} a las {datetime.now().time()}")
         Qj=AColumnas[j]
         for k in range(0,j):
             R[k][j]=prodint(QT[k],Qj)
@@ -79,6 +80,9 @@ def QR_con_HH(A,tol=1e-12):
     R = A.astype(np.float64)
     Q = identidad(m)
     for k in range(0,n):
+        if k % 10 == 0:
+            print(f"householderizando {k}-esima sumbatriz de {n} a las {datetime.now().time()}")
+
         x = R[k:, k]
         alpha = - sign(x[0]) * norma(x, 2)     # doble negacion redundante??
         u = x - alpha * identidad(m-k)[0]
