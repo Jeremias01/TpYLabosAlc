@@ -89,6 +89,8 @@ def cholesky(A):
 
  # Cholesky: A = L L^T, con L triangular inferior
 L = cholesky(A)
+ # A = X^T X  (simétrica definida positiva)
+A = matmul(Xt, X) 
 def pinvEcuacionesNormales(X,L, Y):
     """
     Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
@@ -100,10 +102,6 @@ def pinvEcuacionesNormales(X,L, Y):
     """
     # X es n x n, Y es m x n
     Xt = traspuesta(X)          # n x n
-
-    # A = X^T X  (simétrica definida positiva)
-    A = matmul(Xt, X)           # n x n
-
 
     # Resolver (X^T X) U = X^T
     # 1) L Z = X^T  (triangular inferior)
