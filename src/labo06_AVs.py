@@ -86,5 +86,8 @@ def diagRH(A, tol =1e-8 ,K=1000):
         S_matriz_avecs = matmul(Hv,
             expandirDiagonalPrincipalDesdeArriba(SSombrero, 1))      
 
+    if n % 20 == 0:
+        print(f"listo diagonalizando {n}-esima sumbatriz a las {datetime.now().time()}")
+
 
     return S_matriz_avecs, D_matriz_avals

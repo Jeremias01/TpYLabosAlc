@@ -51,8 +51,9 @@ def svd_reducida(A, k="max", tol=1e-8):
 
 
     hatU = np.zeros((len(A), min(k,i)))
+    AhatV = matmul(A, hatV)
     for i in range(len(hatU[0])):
-        hatU[:, i] = matmul(A, hatV)[:, i] / hatSig[i]
+        hatU[:, i] = AhatV[:, i] / hatSig[i]
 
     if ColMayorAFil:
         return hatV, hatSig, hatU
