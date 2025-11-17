@@ -13,6 +13,7 @@ from labo05_QR import *
 from labo06_AVs import *
 from labo07_markov import *
 from labo08_SVD import *
+from datetime import datetime
 ### TODOS ESTOS IMPORTS SE VAN A TENER QUE REEMPLAZAR CON EL CODIGO ENTERO EN LA ENTREGA FINAL TODO
 
 
@@ -67,63 +68,43 @@ def cholesky(A):
     L = np.zeros((len(A),len(A[0])))
  
     for columna in range((len(A))):
-        suma = 0
-        for i in range(columna):
-            suma += (L[columna][i])**2
+        if columna % 100 == 0:
+            print(f"choleskizando {columna}-esima columna a las {datetime.now().time()}")
+#        suma = 0
+        suma = np.sum(np.pow(L[columna],2))
+
+#        for i in range(columna):
+#            suma += (L[columna][i])**2
         diagonal = np.sqrt(A[columna][columna]- suma)
         L[columna][columna] = diagonal
 
         for fila in range(columna+1, len(A)):
-            suma = 0
-            for i in range(0,columna):
-                suma += L[fila][i] * L[columna][i]
+            suma = np.sum(L[fila][:columna] * L[columna][:columna])
+            #suma = 0
+            #for i in range(0,columna):
+            #    suma += L[fila][i] * L[columna][i]
             L[fila][columna] = (A[fila][columna] - suma) / L[columna][columna]
 
     return L
 
-# Esta funcion la utilizamos para obtener Z, nos interesa obtener Z para resolver la ecuacion L*Z = X^t
 
-def sustitucion_adelante(L, B):
-    p = L.shape[0]
-    Z = np.zeros((p, B.shape[1]))   
-
-    for i in range(p):               
-        for c in range(B.shape[1]):   
-            suma = 0.0
-            for k in range(i):       
-                suma += L[i][k] * Z[k][c]
-            Z[i][c] = (B[i][c] - suma) / L[i][i]
-
-    return Z
-
-# Esta funcion nos permite obtener X^+ utilizando el Z obtenido por la funcion anterior, esto se obtiene a partir de la ecuacion L^t * X^+ = Z
-def sustitucion_atras(U,Z):
-    p = U.shape[0]
-    V = np.zeros((p, Z.shape[1])) 
-
-    for i in range(p - 1, -1, -1):       
-        for c in range(Z.shape[1]):     
-            suma = 0.0
-            for k in range(i + 1, p):    
-                suma += U[i][k] * V[k][c]
-            V[i][c] = (Z[i][c] - suma) / U[i][i]
-
-    return V
-
-
-#TODO che no tenemos permitido usar .T ni @
-#Esta funcion toma L (cholesky), Y y calcula W usando dos sustituciones: una para llegar a Z y otra para llegar a la pseudo–inversa X^+.        
-def pinvEcuacionesNormales(L, Y):
+def pinvEcuacionesNormales(X,L, Y):
     """
     Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
     la resolución de la psetargetsudo-inversa usando el algoritmo 1 y descomposición cholesky. 
-    L: la matriz de Cholesky 
+    X: la matriz original
+    L: la matriz de Cholesky de XX^t 
     Y: la matriz de  de entrenamiento.
     retorna cálculo de los pesos W
     """
-    Z = sustitucion_adelante(L, Xt)
-    Xp = sustitucion_atras(L.T, Z)
-    W = Y @ Xp
+    # el enunciado pide usar  V X X^t    = X^t.
+    #                        (V X X^t)^t = X
+    #                         X X^t V^t = X
+    #                         L L^t V^t = X
+    
+    Vt = res_LU_mat(L, traspuesta(L), X)
+    V = traspuesta(Vt)
+    W = matmul(Y,V)
     return W
    
 
@@ -153,6 +134,8 @@ def pinvSVD(U, S, V, Y):
         VS_inv[:, i] = V[:, i] * S_inv[i]
     
     A_pseudoinv = matmul(VS_inv, traspuesta(U))
+    #assert esPseudoInversa(U @ np.diag(S) @ traspuesta(V), A_pseudoinv, 1e-8)
+    
     W = matmul(Y,A_pseudoinv)
 
     return W
@@ -162,14 +145,17 @@ def pinvQR(Q,R,Y):
     VT = res_tri_mat(R, traspuesta(Q), False)
     print("listo resolviendo sistema")
     V = traspuesta(VT)
+    #assert esPseudoInversa(traspuesta(Q @ R), V)
     print("listo trasponiendo")
     W = matmul(Y,V)
+    
     print("Calculando W")
     return W
 
 
 def pinvHouseHolder(Q, R, Y):
     """
+    Usando factorizacion QR de X^T,
     Q: Matriz ortonormal de QR, calculada con HouseHolder
     R: Matriz triangular superior de QR, calculada con HouseHolder
     Y: matriz de targets de entrenamiento. 
@@ -180,6 +166,7 @@ def pinvHouseHolder(Q, R, Y):
 
 def pinvGramSchmidt(Q, R, Y):
     """
+    Usando factorizacion QR de X^T,
     Q: Matriz ortonormal de QR, calculada con Gram-Schmidt
     R: Matriz triangular superior de QR, calculada con Gram-Schmidt
     Y: matriz de targets de entrenamiento. 
@@ -198,11 +185,12 @@ def esPseudoInversa(X, pX, tol=1e-8):
     pXX = matmul(pX, X)
     
     pasa_condiciones = True
-    pasa_condiciones &= matricesIguales( matmul(XpX, X)  ,  X )
-    pasa_condiciones &= matricesIguales( matmul(pXX, pX) ,  pX )
-    pasa_condiciones &= esSimetrica( XpX )
-    pasa_condiciones &= esSimetrica( pXX )
+    pasa_condiciones &= matricesIguales( matmul(XpX, X)  ,X,  tol )
+    pasa_condiciones &= matricesIguales( matmul(pXX, pX) ,  pX , tol)
+    pasa_condiciones &= esSimetrica( XpX , tol)
+    pasa_condiciones &= esSimetrica( pXX , tol)
     
+
     return pasa_condiciones
 
 

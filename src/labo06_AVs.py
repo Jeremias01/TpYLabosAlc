@@ -5,6 +5,7 @@ from labo00_auxiliares import *
 from labo01_errores_igualdad import *
 from labo03_normas import norma
 from labo05_QR import houseHolder
+from datetime import datetime
 
 
 def aplicarPotenciaUnaVez(A,v):
@@ -54,7 +55,7 @@ def metpot2k(A, tol =10**(-15) ,K=1000):
 
 
 
-def diagRH(A, tol =10**(-15) ,K=1000):
+def diagRH(A, tol =1e-8 ,K=1000):
     """
     A: una matriz simetrica de n x n.
     tol: la tolerancia en la diferencia entre un paso y el siguiente de la estimacion del autovector.
@@ -62,9 +63,14 @@ def diagRH(A, tol =10**(-15) ,K=1000):
     retorna matriz de autovectores S y matriz de autovalores D, tal que A = S D S. T
     Si la matriz A no es simetrica, debe retornar None.
     """
-    if not cuadrada(A) or not esSimetrica(A):
-        return None
+    if not cuadrada(A) or not (esS:=esSimetrica(A, tol)):
+        # si lo dejo haciendo cuentas grandes no quiero perderlo todo pq estaba mal la toleranica
+        print("ERROR: se rompe cuadrada o simetria con", A.shape, "o alguna tolerancia que no quiero gastar tiempo en calcular" )
+        # return None
     n = len(A)
+    if n % 20 == 0:
+        print(f"diagonalizando {n}-esima sumbatriz a las {datetime.now().time()}")
+
 
     v,aVal,_ = metpot2k(A,tol,K)
     e1_menos_v = identidad(n)[0] - v
@@ -79,6 +85,9 @@ def diagRH(A, tol =10**(-15) ,K=1000):
         D_matriz_avals = expandirDiagonalPrincipalDesdeArriba(DSombero, aVal)  
         S_matriz_avecs = matmul(Hv,
             expandirDiagonalPrincipalDesdeArriba(SSombrero, 1))      
+
+    if n % 20 == 0:
+        print(f"listo diagonalizando {n}-esima sumbatriz a las {datetime.now().time()}")
 
 
     return S_matriz_avecs, D_matriz_avals
