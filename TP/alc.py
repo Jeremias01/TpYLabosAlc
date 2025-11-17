@@ -87,7 +87,8 @@ def cholesky(A):
 
     return L
 
-
+ # Cholesky: A = L L^T, con L triangular inferior
+L = cholesky(A)
 def pinvEcuacionesNormales(X,L, Y):
     """
     Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
@@ -97,16 +98,25 @@ def pinvEcuacionesNormales(X,L, Y):
     Y: la matriz de  de entrenamiento.
     retorna cálculo de los pesos W
     """
-    # el enunciado pide usar  V X X^t    = X^t.
-    #                        (V X X^t)^t = X
-    #                         X X^t V^t = X
-    #                         L L^t V^t = X
-    
-    Vt = res_LU_mat(L, traspuesta(L), X)
-    V = traspuesta(Vt)
-    W = matmul(Y,V)
+    # X es n x n, Y es m x n
+    Xt = traspuesta(X)          # n x n
+
+    # A = X^T X  (simétrica definida positiva)
+    A = matmul(Xt, X)           # n x n
+
+
+    # Resolver (X^T X) U = X^T
+    # 1) L Z = X^T  (triangular inferior)
+    Z  = res_tri_mat(L, Xt, inferior=True)
+
+    # 2) L^T U = Z  (triangular superior)
+    Lt = traspuesta(L)
+    U  = res_tri_mat(Lt, Z, inferior=False)
+
+    # Ahora U = (X^T X)^(-1) X^T = X^+
+    W = matmul(Y, U)            # m x n
+
     return W
-   
 
 def pinvSVD(U, S, V, Y):
     """ 
