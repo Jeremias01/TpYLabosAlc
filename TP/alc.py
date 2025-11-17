@@ -150,7 +150,7 @@ def pinvSVD(U, S, V, Y):
     # Como tenemos S vector que representa una matriz diagonal, podemos hacer mas rápida la multiplicación
     VS_inv = np.zeros(V.shape)
     for i in range(V.shape[1]):
-        VS_inv[:, i] = V[:, i] * S[i]
+        VS_inv[:, i] = V[:, i] * S_inv[i]
     
     A_pseudoinv = matmul(VS_inv, traspuesta(U))
     W = matmul(Y,A_pseudoinv)
