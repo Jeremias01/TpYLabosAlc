@@ -63,7 +63,7 @@ def QR_con_GS(A,tol=1e-12,retorna_nops=False):
 def houseHolder(u):
     # precondición: u tal que ||u||_2 = 1
     mMenosK = len(u) 
-    return identidad(mMenosK) - 2 * matmul(matCol(u), matFila(u))
+    return identidad(mMenosK) - 2 * matCol(u)@matFila(u)           # cambio los matmul por @ para que no sea tan lento
 
 
 
@@ -91,8 +91,8 @@ def QR_con_HH(A,tol=1e-12):
             Hk =  houseHolder(u)
             for iter in range(k): 
                 Hk = expandirDiagonalPrincipalDesdeArriba(Hk, 1)
-            R = matmul(Hk, R)
-            Q = matmul(Q, traspuesta(Hk))
+            R = Hk@R
+            Q = Q@traspuesta(Hk)       # cambio los matmul por @ para que no sea tan lento
 
     #borramos filas y columnas redundantes antes de devolver
     return Q[:,:n],R[:n,:]

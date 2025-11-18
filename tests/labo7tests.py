@@ -64,12 +64,12 @@ def run():
         T = transiciones_al_azar_continuas(i)
         assert es_markov(T), f"transiciones_al_azar_continuas fallo para n={i}"
         
-        T = transiciones_al_azar_uniformes(i,0.3)
+        T = transiciones_al_azar_uniforme(i,0.3)
         assert es_markov_uniforme(T), f"transiciones_al_azar_uniformes fallo para n={i}"
         # Si no atajan casos borde, pueden fallar estos tests. Recuerden que suma de columnas DEBE ser 1, no valen columnas nulas.
-        T = transiciones_al_azar_uniformes(i,0.01)
+        T = transiciones_al_azar_uniforme(i,0.01)
         assert es_markov_uniforme(T), f"transiciones_al_azar_uniformes fallo para n={i}"
-        T = transiciones_al_azar_uniformes(i,0.01)
+        T = transiciones_al_azar_uniforme(i,0.01)
         assert es_markov_uniforme(T), f"transiciones_al_azar_uniformes fallo para n={i}"
         
     # nucleo

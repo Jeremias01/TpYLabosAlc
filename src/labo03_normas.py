@@ -49,12 +49,12 @@ from labo04_LU import inversa
 def norma(x, p):
     if p != 'inf':
         # No tenemos permitdo usar np.power para vectorizar las potencias. entonces np.sum no sirve para vectorizar.
-        #return np.sum(np.power(np.abs(x), p))**(1/p)
+        return np.sum(np.power(np.abs(x), p))**(1/p)
     
-        sum = 0
-        for item in x:
-            sum += np.abs(item) ** p
-        return sum ** (1/p)        
+        # sum = 0
+        # for item in x:
+        #     sum += np.abs(item) ** p
+        # return sum ** (1/p)        
         
     
     if p == 'inf':

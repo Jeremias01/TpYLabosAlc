@@ -19,10 +19,10 @@ def transiciones_al_azar_continuas(n):
     Retorna matriz T de n x n normalizada por columnas, y con entradas al azar en el
     intervalo [0, 1]
     """
-    n = np.abs(np.random.rand(n,n))
+    m = np.abs(np.random.rand(n,n))
     for i in range(n):
-        n[:, i] = n[:, i] / norma(n[:, i],1)
-    return n
+        m[:, i] = m[:, i] / norma(m[:, i],1)
+    return m
 
 
 
@@ -36,11 +36,11 @@ def transiciones_al_azar_uniforme(n, thres):
     elementos de la columna $j$ son iguales (a 1 sobre el número de elementos distintos
     de cero en la columna).
     """
-    n = np.abs(np.random.rand(n,n))
+    m = np.abs(np.random.rand(n,n))
     for i in range(n):
-        n[:, i] = n[:, i] *  (n[:, i>thres].astype(np.float64)) # dudoso
-        n[:, i] = n[:, i] / norma(n[:, i],1)
-    return n
+        m[:, i] = m[:, i] *  ((m[:, i]>thres).astype(np.float64)) # dudoso!!!!
+        m[:, i] = m[:, i] / norma(m[:, i],1)
+    return m
 
 
 
