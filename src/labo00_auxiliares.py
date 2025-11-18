@@ -19,8 +19,7 @@ def matmul(A,B):
     colcount = len(B[0])
 
     assert len(B) == len(A[0])
-
-    valorquecoincide = len(B)  
+    
     res = np.zeros((rowcount, colcount))
     for r in range(rowcount):
         for c in range(colcount):
