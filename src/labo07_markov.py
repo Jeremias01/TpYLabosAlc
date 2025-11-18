@@ -54,8 +54,11 @@ def nucleo(A, tol=1e-15):
     Retorna los autovectores en cuestión, como una matriz de n x k, con k el numero de
     autovectores en el núcleo.
     """
+
     
-    raise NotImplementedError("Implementar")
+    AtA = matmul( traspuesta(A) , A )
+    S_matriz_avecs, D_matriz_avals = diagRH(AtA)
+    
 
 
 
