@@ -19,7 +19,7 @@ def transiciones_al_azar_continuas(n):
     Retorna matriz T de n x n normalizada por columnas, y con entradas al azar en el
     intervalo [0, 1]
     """
-    n = np.random.rand(n,n)
+    n = np.abs(np.random.rand(n,n))
     for i in range(n):
         n[:, i] = n[:, i] / norma(n[:, i],1)
     return n
@@ -36,7 +36,7 @@ def transiciones_al_azar_uniforme(n, thres):
     elementos de la columna $j$ son iguales (a 1 sobre el número de elementos distintos
     de cero en la columna).
     """
-    n = np.random.rand(n,n)
+    n = np.abs(np.random.rand(n,n))
     for i in range(n):
         n[:, i] = n[:, i] *  (n[:, i>thres].astype(np.float64)) # dudoso
         n[:, i] = n[:, i] / norma(n[:, i],1)
@@ -58,7 +58,11 @@ def nucleo(A, tol=1e-15):
     
     AtA = matmul( traspuesta(A) , A )
     S_matriz_avecs, D_matriz_avals = diagRH(AtA)
-    
+    res = []
+    for aval, avec in zip(D_matriz_avals, traspuesta(S_matriz_avecs)):
+        if aval > tol:
+            res.append(avec)
+    return traspuesta(np.array(res))
 
 
 
@@ -73,8 +77,12 @@ def crear_rala(listado, m_filas, n_columnas, tol=1e-15):
     elementos con modulo menor a tol deben descartarse por default.
     - Tupla (m_filas, n_columnas) que permita conocer las dimensiones de la matriz.
     """
-    raise NotImplementedError("Implementar")
-
+    res = dict()
+    filas, columnas, valores = listado
+    for fila, columna, valor in zip(filas, columnas, valores):
+        if valor > tol:
+            res[(fila, columna)] = valor
+    return [res, (m_filas, n_columnas)]
 
 
 def multiplicar_rala_vector(A, v):
@@ -82,4 +90,11 @@ def multiplicar_rala_vector(A, v):
     Recibe una matriz rala creada con crear_rala y un vector v.
     Retorna un vector w resultado de multiplicar A con v
     """
-    raise NotImplementedError("Implementar")
+    res = v.copy()
+    for i,elem in enumerate(v):
+        newelem = 0
+        for jrow in range(A[1][0]):
+            if (jrow,i) in A[0]:
+                newelem += A[0][(jrow,i)]
+        res[i] = newelem
+    return res
