@@ -1,10 +1,30 @@
+import sys
+
+sys.path.append(".")
+sys.path.append("../src")
+sys.path.append("./src")
+from labo00_auxiliares import *
+from labo01_errores_igualdad import *
+from labo02_TLs_basicas import *
+from labo03_normas import *
+from labo04_LU import *
+from labo05_QR import *
+from labo06_AVs import *
+
+import numpy as np
+
 def transiciones_al_azar_continuas(n):
     """
     n: la cantidad de filas (columnas) de la matriz de transición.
     Retorna matriz T de n x n normalizada por columnas, y con entradas al azar en el
     intervalo [0, 1]
     """
-    raise NotImplementedError("Implementar")
+    n = np.random.rand(n,n)
+    for i in range(n):
+        n[:, i] = n[:, i] / norma(n[:, i],1)
+    return n
+
+
 
 
 def transiciones_al_azar_uniforme(n, thres):
@@ -16,7 +36,11 @@ def transiciones_al_azar_uniforme(n, thres):
     elementos de la columna $j$ son iguales (a 1 sobre el número de elementos distintos
     de cero en la columna).
     """
-    raise NotImplementedError("Implementar")
+    n = np.random.rand(n,n)
+    for i in range(n):
+        n[:, i] = n[:, i] *  (n[:, i>thres].astype(np.float64)) # dudoso
+        n[:, i] = n[:, i] / norma(n[:, i],1)
+    return n
 
 
 
@@ -30,6 +54,7 @@ def nucleo(A, tol=1e-15):
     Retorna los autovectores en cuestión, como una matriz de n x k, con k el numero de
     autovectores en el núcleo.
     """
+    
     raise NotImplementedError("Implementar")
 
 
