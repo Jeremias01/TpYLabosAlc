@@ -56,6 +56,11 @@ def cargarDataset(carpeta):
 
 
 def cargarDatasetReducido(carpeta, filas, columnas):
+    """
+    columnas debe ser mayor a 2*filas para que la matriz que devuelva sea compatible con los otros metodos
+    para probar con un subconjunto del dataset. filas es cuantas filas de cada embedding, y columnas cuantos embeddings de perros y de gatos
+    devuelve matriz de filas x 2*columnas.
+    """
     Xt, Yt, Xv, Yv = cargarDataset(carpeta)
     return (np.concatenate((Xt[:filas,:columnas], Xt[:filas,-columnas:]),1),
             np.concatenate((Yt[:,:columnas] , Yt[:,-columnas:]),1),
@@ -71,7 +76,7 @@ def cholesky(A):
         if columna % 100 == 0:
             print(f"choleskizando {columna}-esima columna a las {datetime.now().time()}")
 #        suma = 0
-        suma = np.sum(np.pow(L[columna],2))
+        suma = np.sum(np.power(L[columna],2))
 
 #        for i in range(columna):
 #            suma += (L[columna][i])**2
@@ -87,10 +92,6 @@ def cholesky(A):
 
     return L
 
- # Cholesky: A = L L^T, con L triangular inferior
-L = cholesky(A)
- # A = X^T X  (simétrica definida positiva)
-A = matmul(Xt, X) 
 def pinvEcuacionesNormales(X,L, Y):
     """
     Resuelve el cálculo de los pesos utilizando las ecuaciones normales para
@@ -100,21 +101,16 @@ def pinvEcuacionesNormales(X,L, Y):
     Y: la matriz de  de entrenamiento.
     retorna cálculo de los pesos W
     """
-    # X es n x n, Y es m x n
-    Xt = traspuesta(X)          # n x n
-
-    # Resolver (X^T X) U = X^T
-    # 1) L Z = X^T  (triangular inferior)
-    Z  = res_tri_mat(L, Xt, inferior=True)
-
-    # 2) L^T U = Z  (triangular superior)
-    Lt = traspuesta(L)
-    U  = res_tri_mat(Lt, Z, inferior=False)
-
-    # Ahora U = (X^T X)^(-1) X^T = X^+
-    W = matmul(Y, U)            # m x n
-
+    # el enunciado pide usar  V X X^t    = X^t.
+    #                        (V X X^t)^t = X
+    #                         X X^t V^t = X
+    #                         L L^t V^t = X
+    
+    Vt = res_LU_mat(L, traspuesta(L), X)
+    V = traspuesta(Vt)
+    W = matmul(Y,V)
     return W
+
 
 def pinvSVD(U, S, V, Y):
     """ 
@@ -135,7 +131,7 @@ def pinvSVD(U, S, V, Y):
     #W = matmul(Y, matmul((V1, SigmaMas),traspuesta(U)))
 
     # S solo contiene los Valores Singulares positivos
-    S_inv = np.pow(S, -1)
+    S_inv = np.power(S, -1)
     # Como tenemos S vector que representa una matriz diagonal, podemos hacer mas rápida la multiplicación
     VS_inv = np.zeros(V.shape)
     for i in range(V.shape[1]):

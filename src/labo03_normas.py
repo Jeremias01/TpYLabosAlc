@@ -48,7 +48,7 @@ from labo04_LU import inversa
 # calcula norma p de un vector x, vale usar ´inf´
 def norma(x, p):
     if p != 'inf':
-        return np.sum(np.pow(np.abs(x), p))**(1/p)
+        return np.sum(np.power(np.abs(x), p))**(1/p)
     
     if p == 'inf':
         return np.max(np.abs(x))
