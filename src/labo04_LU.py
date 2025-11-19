@@ -48,12 +48,6 @@ def calculaLU(A):
     return L, U, cant_op
 
 
-A = np.array([
-    [2,1,2,3],
-    [4,3,3,4],
-    [-2,2,-4,-12],
-    [4,1,8,-3],
-]   )
 
 
 def res_tri(L, b, inferior = True) :
