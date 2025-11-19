@@ -5,10 +5,18 @@ sys.path.append("../src")
 sys.path.append("./src")
 
 def calcularAx(A,x):
-    res = np.zeros(len(x))
+    res = np.zeros(A.shape[0])
 
     for i,row in enumerate(A):
         res[i] = prodint(row, x, conj=False)
+
+    return res
+
+def calcular_xtA(A,x):
+    res = np.zeros(A.shape[1])
+
+    for i in range(A.shape[1]):
+        res[i] = prodint(A[:,i], x, conj=False)
 
     return res
 

@@ -36,9 +36,10 @@ def transiciones_al_azar_uniforme(n, thres):
     elementos de la columna $j$ son iguales (a 1 sobre el número de elementos distintos
     de cero en la columna).
     """
-    m = np.abs(np.random.rand(n,n))
+    m = np.zeros((n,n)) #np.abs(np.random.rand(n,n))
     for i in range(n):
-        m[:, i] = m[:, i] *  ((m[:, i]>thres).astype(np.float64)) # dudoso!!!!
+        while norma(m[:, i],1) == 0:
+            m[:, i] = (np.abs(np.random.rand(n))>thres).astype(np.float64) # dudoso
         m[:, i] = m[:, i] / norma(m[:, i],1)
     return m
 
@@ -59,10 +60,11 @@ def nucleo(A, tol=1e-15):
     AtA = matmul( traspuesta(A) , A )
     S_matriz_avecs, D_matriz_avals = diagRH(AtA)
     res = []
-    for aval, avec in zip(D_matriz_avals, traspuesta(S_matriz_avecs)):
-        if aval > tol:
-            res.append(avec)
-    return traspuesta(np.array(res))
+    for i in range(len(S_matriz_avecs)):
+        if D_matriz_avals[i][i] <= tol:
+            res.append(S_matriz_avecs[:,i])
+    print(res)
+    return traspuesta(np.array(res)) if res != [] else np.array([])
 
 
 
@@ -78,10 +80,11 @@ def crear_rala(listado, m_filas, n_columnas, tol=1e-15):
     - Tupla (m_filas, n_columnas) que permita conocer las dimensiones de la matriz.
     """
     res = dict()
-    filas, columnas, valores = listado
-    for fila, columna, valor in zip(filas, columnas, valores):
-        if valor > tol:
-            res[(fila, columna)] = valor
+    if listado != []:
+        filas, columnas, valores = listado
+        for fila, columna, valor in zip(filas, columnas, valores):
+            if valor > tol:
+                res[(fila, columna)] = valor
     return [res, (m_filas, n_columnas)]
 
 
@@ -90,11 +93,11 @@ def multiplicar_rala_vector(A, v):
     Recibe una matriz rala creada con crear_rala y un vector v.
     Retorna un vector w resultado de multiplicar A con v
     """
-    res = v.copy()
-    for i,elem in enumerate(v):
-        newelem = 0
-        for jrow in range(A[1][0]):
-            if (jrow,i) in A[0]:
-                newelem += A[0][(jrow,i)]
-        res[i] = newelem
+    Ashape = A[1]
+    Amat = A[0]
+    res = np.zeros(Ashape[0])
+    for i in range(Ashape[0]):
+        for j in range(Ashape[1]):
+            if (i,j) in A[0]:
+                res[i] += A[0][(i,j)] * v[j]
     return res

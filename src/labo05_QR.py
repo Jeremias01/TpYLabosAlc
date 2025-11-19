@@ -63,9 +63,32 @@ def QR_con_GS(A,tol=1e-12,retorna_nops=False):
 def houseHolder(u):
     # precondición: u tal que ||u||_2 = 1
     mMenosK = len(u) 
-    return identidad(mMenosK) - 2 * matCol(u)@matFila(u)           # cambio los matmul por @ para que no sea tan lento
+    return identidad(mMenosK) - 2 * uvt(u,u) 
+
+# u @ v^t
+def uvt(u,v):
+    return traspuesta(u * matCol(v).repeat(len(u), axis=1))
+
+# A @ houseHolder(u)  pero mas eficiente
+def matmulHouseHolderDerecha(A,u):
+    return A - uvt(2 * calcularAx(A, u), u)
+
+def matmulHouseHolderDerechaMenor(A,u):
+    Amenor = A[:, A.shape[0]-len(u):]
+    res_menor = matmulHouseHolderDerecha(Amenor,u)
+    A[:, A.shape[0]-len(u):] = res_menor
+    return A
 
 
+#  houseHolder(u) @ A  pero mas eficiente
+def matmulHouseHolderIzquierda(u,A):
+    return A - uvt(2 * u, calcular_xtA(A, u))
+    
+def matmulHouseHolderIzquierdaMenor(u,A):
+    Amenor = A[A.shape[0]-len(u):, :]
+    res_menor = matmulHouseHolderIzquierda(u,Amenor)
+    A[A.shape[0]-len(u):, :] = res_menor
+    return A
 
 def QR_con_HH(A,tol=1e-12):
     """
@@ -80,7 +103,7 @@ def QR_con_HH(A,tol=1e-12):
     R = A.astype(np.float64)
     Q = identidad(m)
     for k in range(0,n):
-        if k % 10 == 0:
+        if k % 100 == 0:
             print(f"householderizando {k}-esima sumbatriz de {n} a las {datetime.now().time()}")
 
         x = R[k:, k]
@@ -88,11 +111,15 @@ def QR_con_HH(A,tol=1e-12):
         u = x - alpha * identidad(m-k)[0]
         if (unorma := norma(u, 2)) > tol:
             u = u / unorma
-            Hk =  houseHolder(u)
-            for iter in range(k): 
-                Hk = expandirDiagonalPrincipalDesdeArriba(Hk, 1)
-            R = Hk@R
-            Q = Q@traspuesta(Hk)       # cambio los matmul por @ para que no sea tan lento
+            #Hk =  houseHolder(u)
+            #for iter in range(k): 
+            #    Hk = expandirDiagonalPrincipalDesdeArriba(Hk, 1)
+            #
+            #R = matmul(Hk,R)
+            #Q = matmul(Q,traspuesta(Hk))       
+            R = matmulHouseHolderIzquierdaMenor(u,R)
+            Q = matmulHouseHolderDerechaMenor(Q,u)
+
 
     #borramos filas y columnas redundantes antes de devolver
     return Q[:,:n],R[:n,:]
