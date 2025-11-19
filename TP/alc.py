@@ -31,8 +31,8 @@ def cargarDataset(carpeta):
     # Esta parte de PREFIX se tiene que borrar cuando ya este todo funcionando para la entrega final TODO 
     
     prefix = ""
-    if os.getcwd()[-3:] != "/TP":
-        prefix = "TP"
+    # if os.getcwd()[-3:] != "/TP":
+    #     prefix = "TP"
 
     XvCats = np.load(f'{os.getcwd()}{prefix}/{carpeta}/val/cats/efficientnet_b3_embeddings.npy')
     XtCats = np.load(f'{os.getcwd()}{prefix}/{carpeta}/train/cats/efficientnet_b3_embeddings.npy')
