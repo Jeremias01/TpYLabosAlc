@@ -38,7 +38,6 @@ def cargarDataset(carpeta):
     XtCats = np.load(f'{os.getcwd()}{prefix}/{carpeta}/train/cats/efficientnet_b3_embeddings.npy')
     XvDogs = np.load(f'{os.getcwd()}{prefix}/{carpeta}/val/dogs/efficientnet_b3_embeddings.npy')
     XtDogs = np.load(f'{os.getcwd()}{prefix}/{carpeta}/train/dogs/efficientnet_b3_embeddings.npy')
-
     Xv = np.concatenate((XvDogs, XvCats), 1)    
     Xt = np.concatenate((XtDogs, XtCats), 1)    
 
