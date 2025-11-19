@@ -79,6 +79,7 @@ def res_tri_mat(L, B, inferior = True):
     Recibe L triangular, superior o inferior segun parametro inferior, y B.
     Devuelve X, la matriz solucion. 
     """
+    print(type(L), type(B))
     if L.shape[0] != B.shape[0]:
         return None 
     res = np.zeros((L.shape[0], B.shape[1]))

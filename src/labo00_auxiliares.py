@@ -4,7 +4,6 @@ sys.path.append(".")
 sys.path.append("../src")
 sys.path.append("./src")
 
-#TODO posiblemente convenga vectorizar esto. repetir el vector n veces, multiplciar con * con la matrix, sumar cada columna? no se si eso numpy lo vectorizaria bien. si si, aceleraría mucho matmul
 def calcularAx(A,x):
     res = np.zeros(len(x))
 
@@ -19,8 +18,7 @@ def matmul(A,B):
     colcount = len(B[0])
 
     assert len(B) == len(A[0])
-
-    valorquecoincide = len(B)  
+    
     res = np.zeros((rowcount, colcount))
     for r in range(rowcount):
         for c in range(colcount):
@@ -82,7 +80,7 @@ def prodint(v1,v2, conj=True):  #prod int definido para vectores de la misma lon
             v1 = np.conj(v1)
         v1conjv2 = v1*v2
         
-        return np.sum(v1conjv2) #TODO preguntar si está bien usar sum, me imagino que si y que numpy lo implementa vectorizado
+        return np.sum(v1conjv2) 
 
 
 def cuadrada(A):
