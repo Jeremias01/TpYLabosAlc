@@ -49,7 +49,7 @@ def trans_afin(v,theta,s,b):
     Recibe un vector v (en R2), un ángulo theta, una tira de números s (en R2), y un vector b en (R2) y retorna el vector w resultante de aplicar la transformacion afin a v
     """
     mult = v + [1]
-    return calcularAx(afin(theta,s,b), mult)
+    return calcularAx(afin(theta,s,b), mult)[:-1]
 
     
     

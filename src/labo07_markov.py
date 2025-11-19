@@ -93,11 +93,11 @@ def multiplicar_rala_vector(A, v):
     Recibe una matriz rala creada con crear_rala y un vector v.
     Retorna un vector w resultado de multiplicar A con v
     """
-    res = v.copy()
-    for i,elem in enumerate(v):
-        newelem = 0
-        for jrow in range(A[1][0]):
-            if (jrow,i) in A[0]:
-                newelem += A[0][(jrow,i)] * v[i]
-        res[i] = newelem
+    Ashape = A[1]
+    Amat = A[0]
+    res = np.zeros(Ashape[0])
+    for i in range(Ashape[0]):
+        for j in range(Ashape[1]):
+            if (i,j) in A[0]:
+                res[i] += A[0][(i,j)] * v[j]
     return res

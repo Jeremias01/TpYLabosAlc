@@ -58,9 +58,11 @@ def diagRH(A, tol =1e-8 ,K=1000):
     retorna matriz de autovectores S y matriz de autovalores D, tal que A = S D S. T
     Si la matriz A no es simetrica, debe retornar None.
     """
-    if not cuadrada(A) or not (esS:=esSimetrica(A, tol)):
+    if not cuadrada(A):
+        return None
+    if not (esS:=esSimetrica(A, tol)):
         # si lo dejo haciendo cuentas grandes no quiero perderlo todo pq estaba mal la toleranica
-        print("ERROR: se rompe cuadrada o simetria con", A.shape, "o alguna tolerancia que no quiero gastar tiempo en calcular" )
+        print("WARNING: no se cumple la toleranicia pedida" )
         # return None
     n = len(A)
     if n % 20 == 0:

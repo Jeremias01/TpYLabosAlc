@@ -1,43 +1,4 @@
 
-"""
-def norma(x,p):
-    if p == 'inf':
-        maxv = abs(x[0])
-        for item in x:
-            if abs(item) > maxv:
-                maxv = abs(item)
-        return maxv
-    suma=0
-    for i in x:
-        suma+=abs(i)**p
-    return (suma)**(1/p)
-
-
-norma([-1,1],'inf')
-
-
-def normaliza(X,p):
-    res = []
-    for item in X:
-        res.append(norma(item,p))
-    return np.array(res)
-
-def normaMatMC(A,q,p,Np):
-    randxs = np.random.rand(Np,len(A[0]))
-    maxv = norma(calcularAx(A, randxs[0]),p)/norma(randxs[0],q)
-    for x in randxs:
-        n = norma(calcularAx(A, x),p)/norma(x,q)
-        if n>maxv: maxv=n
-    return maxv
-"""
-    
-    
-    
-
-    
-
-
-
 import numpy as np
 import sys
 sys.path.append(".") 
@@ -49,12 +10,12 @@ from labo04_LU import inversa
 def norma(x, p):
     if p != 'inf':
         # No tenemos permitdo usar np.power para vectorizar las potencias. entonces np.sum no sirve para vectorizar.
-        return np.sum(np.power(np.abs(x), p))**(1/p)
+       #  return np.sum(np.power(np.abs(x), p))**(1/p)
     
-        # sum = 0
-        # for item in x:
-        #     sum += np.abs(item) ** p
-        # return sum ** (1/p)        
+        sum = 0
+        for item in x:
+            sum += np.abs(item) ** p
+        return sum ** (1/p)        
         
     
     if p == 'inf':
