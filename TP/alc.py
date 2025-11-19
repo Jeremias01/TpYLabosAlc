@@ -671,12 +671,14 @@ def diagRH(A, tol =1e-8 ,K=1000):
     retorna matriz de autovectores S y matriz de autovalores D, tal que A = S D S. T
     Si la matriz A no es simetrica, debe retornar None.
     """
+
+    ## DESHABILITO ESTOS CHEQUEOS PORQUE OCUPAN MUCHO TIEMPO
     if not cuadrada(A):
         return None
-    if not (esS:=esSimetrica(A, tol)):
-        # si lo dejo haciendo cuentas grandes no quiero perderlo todo pq estaba mal la toleranica
-        print("WARNING: no se cumple la toleranicia pedida" )
-        # return None
+    #if not (esS:=esSimetrica(A, tol)):
+    #    # si lo dejo haciendo cuentas grandes no quiero perderlo todo pq estaba mal la toleranica
+    #    print("WARNING: no se cumple la toleranicia pedida" )
+    #    # return None
     n = len(A)
     if n % 20 == 0:
         print(f"diagonalizando {n}-esima sumbatriz a las {datetime.now().time()}")
