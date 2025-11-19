@@ -4,7 +4,7 @@ sys.path.append(".")
 from labo00_auxiliares import *
 from labo01_errores_igualdad import *
 from labo03_normas import norma
-from labo05_QR import houseHolder
+from labo05_QR import *
 from datetime import datetime
 
 
@@ -47,11 +47,6 @@ def metpot2k(A, tol =10**(-15) ,K=1000):
     return vSombrero, aVal, k
 
 
-#def reflectorHouseholder(v): # pq es correcto esto? parece raro
-#    n = len(v)
-#    idn = identidad(n)
-#    uut = matmul([idn[0]-v], [idn[0]-v])
-#   return idn - 2 * (uut / norma(uut,2))
 
 
 
@@ -74,16 +69,17 @@ def diagRH(A, tol =1e-8 ,K=1000):
 
     v,aVal,_ = metpot2k(A,tol,K)
     e1_menos_v = identidad(n)[0] - v
-    Hv = houseHolder( e1_menos_v / norma(e1_menos_v, 2))
+    # Hv = houseHolder( e1_menos_v / norma(e1_menos_v, 2) )
+    v_para_householder = e1_menos_v / norma(e1_menos_v, 2)
     if n == 2:
-        S_matriz_avecs = Hv
-        D_matriz_avals = matmul(Hv, matmul(A, traspuesta(Hv)))
+        S_matriz_avecs = houseHolder(v_para_householder)
+        D_matriz_avals = matmulHouseHolderIzquierda(v_para_householder, matmulHouseHolderDerecha(A, v_para_householder))
     else:
-        B = matmul(Hv, matmul(A, traspuesta(Hv)))
+        B = matmulHouseHolderIzquierda(v_para_householder, matmulHouseHolderDerecha(A, v_para_householder))
         ASombrero = B[1:,1:]
         SSombrero,DSombero  = diagRH(ASombrero, tol, K)
         D_matriz_avals = expandirDiagonalPrincipalDesdeArriba(DSombero, aVal)  
-        S_matriz_avecs = matmul(Hv,
+        S_matriz_avecs = matmulHouseHolderIzquierda(v_para_householder,
             expandirDiagonalPrincipalDesdeArriba(SSombrero, 1))      
 
     if n % 20 == 0:
