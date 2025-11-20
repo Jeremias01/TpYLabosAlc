@@ -1157,7 +1157,7 @@ def pinvQR(Q,R,Y):
     if(QRGS and not(Nump)):              # la guardo en cache
         PGS = cachepy(lambda:traspuesta(VT), "PGS")
     elif(QRGS and Nump):              # la guardo en cache
-        PGSNump = cachepy(, "PGSNump")
+        PGSNump = cachepy(lambda:traspuesta(VT), "PGSNump")
 
     return W
 
