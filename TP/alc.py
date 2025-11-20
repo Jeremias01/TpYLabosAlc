@@ -33,8 +33,8 @@ PSVDNump=None
 
 tol = 0.01
 
-cache_save_enabledpy = False              # Si se desean reemplazar los resultados que están guardados en cache cada vez que se ejecuta, esta variable debe estar en True. Caso contrario, dejarlo en False
-cache_load_enabledpy = True              # Esto debe estar en True si se quieren cargar los datos de los .npy
+cache_save_enabledpy = True              # Si se desean reemplazar los resultados que están guardados en cache cada vez que se ejecuta, esta variable debe estar en True. Caso contrario, dejarlo en False
+cache_load_enabledpy = False              # Esto debe estar en True si se quieren cargar los datos de los .npy
 
 
 def cachepy(calc, name):
@@ -60,7 +60,7 @@ def pseudoAssertEqualitypy(X,Y, atol = tol):
     try:
         assert np.allclose(X,Y, atol=tol)
     except:
-        print("ERROR: Necesita tolerancia ", np.max(np.abs(X-Y)))
+        print("WARNING: Necesita tolerancia ", np.max(np.abs(X-Y)))
 
 
 
