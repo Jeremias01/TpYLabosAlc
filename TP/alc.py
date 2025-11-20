@@ -4,6 +4,68 @@ import os
 import copy
 from datetime import datetime
 
+Nump=False
+QRHH = False
+QRGS=False
+PGS=None
+PGSNump=None
+PHH=None
+PGSNump=None
+PEqNorm=None
+PEqNormNump=None
+PSVD=None
+PSVDNump=None
+
+
+#Importante: estos labos tienen funciones extras generadas por nosotros
+
+###############################################################################
+###############################################################################
+###############################################################################
+################################# Caché #######################################
+###############################################################################
+###############################################################################
+###############################################################################
+
+
+# Este bloque de código también está en el .ipynb
+
+
+tol = 0.01
+
+cache_save_enabledpy = True              # Si se desean reemplazar los resultados que están guardados en cache cada vez que se ejecuta, esta variable debe estar en True. Caso contrario, dejarlo en False
+cache_load_enabledpy = True              # Esto debe estar en True si se quieren cargar los datos de los .npy
+
+
+def cachepy(calc, name):
+    if cache_load_enabledpy and os.path.isfile(f"{name}.npy"):
+        return np.load(f"{name}.npy", allow_pickle=True)
+    else:
+        val = calc()
+        if cache_save_enabledpy:
+            np.save(f"{name}.npy", val, allow_pickle=True)
+        return val
+
+def cache_manypy(calc, names):
+    if cache_load_enabledpy and all([os.path.isfile(f"{name}.npy") for name in names]):
+        return tuple([cachepy(lambda:None, name) for name in names])
+    else:
+        vals = calc()
+        for name, val in zip(names, vals):
+            cachepy(lambda:val, name)
+        return vals
+    
+# no quiero perder horas de computo pq fallo un assert, armo esto para que si "Fallaría" el assert te avisa
+def pseudoAssertEqualitypy(X,Y, atol = tol):
+    try:
+        assert np.allclose(X,Y, atol=tol)
+    except:
+        print("ERROR: Necesita tolerancia ", np.max(np.abs(X-Y)))
+
+
+
+
+
 ###############################################################################
 ###############################################################################
 ###############################################################################
@@ -13,47 +75,62 @@ from datetime import datetime
 ###############################################################################
 
 def calcularAx(A,x):
+    """
+    Calcula A.x
+    """
     res = np.zeros(A.shape[0])
 
     for i,row in enumerate(A):
-        res[i] = prodint(row, x, conj=False)
+        res[i] = prodint(row, x, conj=False)    # prod int por cada fila
 
     return res
 
 def calcular_xtA(A,x):
+    """
+    Calcula x^t.A
+    """
     res = np.zeros(A.shape[1])
 
-    for i in range(A.shape[1]):
+    for i in range(A.shape[1]):     # ahora para las columnas
         res[i] = prodint(A[:,i], x, conj=False)
 
     return res
 
 
 def matmul(A,B):
+    """
+    Calcula A.B
+    """
     rowcount = len(A)
     colcount = len(B[0])
 
-    assert len(B) == len(A[0])
+    assert len(B) == len(A[0])      #   chequea condiciones
     
     res = np.zeros((rowcount, colcount))
     for r in range(rowcount):
         for c in range(colcount):
-            res[r][c] = prodint( A[r],  B[:, c], conj=False)
+            res[r][c] = prodint( A[r],  B[:, c], conj=False)        # resuelve por fórmula
     return res
 
 def triangularInferior(A):
+    """
+    Obtiene la triangular inferior
+    """
     zeros=np.zeros((len(A),len(A[0])))
     for fila in range(len(A)):
         for col in range(len(A[0])):
-            if(fila>col):
-                zeros[fila][col]=A[fila][col]
+            if(fila>col):                           # se queda con lo de abajo
+                zeros[fila][col]=A[fila][col]   
     return zeros
 
 def triangularSuperior(A):
+    """
+    Obtiene la triangular sup
+    """
     zeros=np.zeros((len(A),len(A[0])))
     for fila in range(A):
         for col in range(len(A)):
-            if(fila<col):
+            if(fila<col):                          # se queda con lo de arriba
                 zeros[fila][col]=A[fila[col]]
     return zeros
 
@@ -65,22 +142,28 @@ def maximo(l):
    return res
 
 def traspuesta(A):
+    """
+    Obtiene la traspuesta 
+    """
     res = np.zeros((A.shape[1], A.shape[0]))
     for j, row in enumerate(A):       
         res[:,j] = row
     return res
 
 def traspuestaPorOtraDiagonal(A):
+    """
+    Obtiene la traspuesta por la otra diagonal, es decir, gira, traspone y vuelve a girar
+    """
     mid=np.zeros((len(A),len(A[0])))
     res=np.zeros((len(A),len(A[0])))
     
-    for i in range(len(A)):
+    for i in range(len(A)):                     # gira
         for j in range(len(A[0])):
             mid[i][j]=A[j][len(A[0])-1-i]
 
-    mid=traspuesta(mid)
+    mid=traspuesta(mid)                         # traspone
 
-    for i in range(len(A)):
+    for i in range(len(A)):                     # vuelve a girar
         for j in range(len(A[0])):
             res[i][j]=mid[len(A)-1-j][i]
 
@@ -91,6 +174,9 @@ def rotar180(A):
 
 
 def prodint(v1,v2, conj=True):  #prod int definido para vectores de la misma long
+    """
+    producto interno
+    """
     if(len(v1)==len(v2)):
         if conj:
             v1 = np.conj(v1)
@@ -100,16 +186,22 @@ def prodint(v1,v2, conj=True):  #prod int definido para vectores de la misma lon
 
 
 def cuadrada(A):
+    """
+    chequea si es cuadrada
+    """
     return len(A)>0 and len(A) == len(A[0])  
 
 
 def expandirDiagonalPrincipalDesdeArriba(D, zerozero):
-    D = np.insert(D, 0, np.zeros((1,len(D))) ,0)
-    D = np.insert(D, 0, np.zeros((1,len(D))),1)
+    D = np.insert(D, 0, np.zeros((1,len(D))) ,0)        # Fila de ceros
+    D = np.insert(D, 0, np.zeros((1,len(D))),1)         # Col de ceros    
     D[0][0] = zerozero
     return D
 
 def sign(n):
+    """
+    n/abs(n) o 0 si es 0
+    """
     if n == 0:
         return 0
     if n > 0:
@@ -141,15 +233,22 @@ def identidad(n):
 ###############################################################################
 ###############################################################################
 
-epsilon = (10**(-14))
+epsilon = (10**(-14))       # error  tolerado
+
 def error(x, y):
+    """
+    diferencia abs entre x e y
+    """
     x = np.float64(x)
     y = np.float64(y)
     
-    return abs(x-y)
+    return abs(x-y)             
 
-def feq(x,y): # float equals
-    return error(x,y) < epsilon # no se si absoluto o no
+def feq(x,y):
+    """
+    float equals dentro del error
+    """
+    return error(x,y) < epsilon 
 
 def error_relativo(x,y):
     """
@@ -164,7 +263,7 @@ def error_relativo(x,y):
 
 def matricesIguales(A,B, atol=epsilon):
     """
-    Devuelve True si ambas matrices son iguales y False en otro caso.
+    Devuelve True si ambas matrices son iguales dentro del error y False en otro caso.
     Considerar que las matrices pueden tener distintas dimensiones, ademas de distintos valores.
     """
     if A.shape != B.shape:
@@ -178,8 +277,10 @@ def matricesIguales(A,B, atol=epsilon):
        
     return True
 
-# no esta en el labo pero seria raro ponerla en el labo00
 def esSimetrica(A, atol=epsilon):
+    """
+    ve si es simetrica comparandola con su traspuesta
+    """
     return matricesIguales(A, traspuesta(A), atol)
 
 
@@ -249,8 +350,11 @@ def trans_afin(v,theta,s,b):
 ###############################################################################
 ###############################################################################
 
-# calcula norma p de un vector x, vale usar ´inf´
+
 def norma(x, p):
+    """
+    calcula norma p de un vector x, vale usar infinito
+    """
     if p != 'inf':
         # No tenemos permitdo usar np.power para vectorizar las potencias. entonces np.sum no sirve para vectorizar.
        #  return np.sum(np.power(np.abs(x), p))**(1/p)
@@ -258,15 +362,18 @@ def norma(x, p):
         sum = 0
         for item in x:
             sum += np.abs(item) ** p
-        return sum ** (1/p)        
+        return sum ** (1/p)               # norma p-esima 
         
     
     if p == 'inf':
         return np.max(np.abs(x))
     
 
-# normaliza una lista de vectores
+
 def normaliza(X,p):
+    """
+    normaliza una lista de vectores
+    """
     res = []
     for i in range(len(X)):
         res.append(X[i]/norma(X[i],p))
@@ -277,6 +384,13 @@ def normaliza(X,p):
 
 
 def normaMatMC(A, q, p, Np):
+
+    """
+    Devuelve la norma ||A||\{q,p} y el vector x en el cual se alcanza
+    el maximo .
+
+    """
+
     norma_max = 0
     vector_max = None
 
@@ -298,19 +412,32 @@ def normaMatMC(A, q, p, Np):
 
 
 def suma_filas(A):
+   """
+   lista de longitud de la cant de filas que tiene la suma de cada una
+   """
    res = []
    for i in range(len(A)):
         c = 0
         for elem in A[i]:
             c += abs(elem)
-        res.append(c)
+        res.append(c)                   # agrega la suma de esa fila
    return res
 
 def suma_columnas(A):
+   """
+   lista de longitud de la cant de filas que tiene la suma de cada una
+   """
    return suma_filas(traspuesta(A))
 
 
 def normaExacta(A, p=[1, 'inf']):
+   
+   """
+   Devuelve una lista con las normas 1 e infinito de una matriz A
+   usando las expresiones del enunciado 2.(c) .
+
+   """
+
    if p == 1:
     return maximo(suma_columnas(A))
     
@@ -322,17 +449,27 @@ def normaExacta(A, p=[1, 'inf']):
     
 
 def condMC(A,p, Np):
+    """
+    Devuelve el numero de condicion de A usando la norma inducida p .
+    """
     norma_A = normaMatMC(A, p, p, Np)
     norma_Inversa = normaMatMC(inversa(A), p, p, Np)
     return norma_A[0] * norma_Inversa[0]
 
 
 def condExacta(A,p):
+  """
+  Que devuelve el numero de condicion de A a partir de la formul a de
+la ecuacion (1) usando la norma p 
+  """
   return normaExacta(A,p)*normaExacta(inversa(A),p)
 
 
 def proyectar(v,u):
-    if(norma(v,2)!=0 and norma(u,2)!=0):
+    """
+    proyecta un vector v en otro u
+    """
+    if(norma(v,2)!=0 and norma(u,2)!=0):                # chequea condiciones
         return prodint(prodint(v,u)/prodint(u,u),u)
     else: return np.zeros(len(v))
 
@@ -361,18 +498,17 @@ def calculaLU(A):
         print('Matriz no cuadrada')
         return
     
-    ## desde aqui -- CODIGO A COMPLETAR
 
     for iter in range(n):
         pivot = Ac[iter][iter]
         if pivot == 0:
             return None, None, 0
         for fila in range(iter+1,n):
-            L_i_inv = Ac[fila][iter] / pivot                                            ; cant_op += 1
-            Ac[fila][iter] = L_i_inv 
-            Ac[fila][iter+1:n] = -L_i_inv * Ac[iter][iter+1:n] + Ac[fila][iter+1:n]     ; cant_op += (n-(iter+1))*2 # para mi era *3 no *2 pero fallan tests 
+            L_i_inv = Ac[fila][iter] / pivot                                            ; cant_op += 1              # cuenta operaciones
+            Ac[fila][iter] = L_i_inv                                                                                # Guarda L en la parte inferior
+            Ac[fila][iter+1:n] = -L_i_inv * Ac[iter][iter+1:n] + Ac[fila][iter+1:n]     ; cant_op += (n-(iter+1))*2
     
-    L = triangularInferior(Ac) + identidad(n)                       ; # estas no cuenan cant_op += n**2, si no fallan tests
+    L = triangularInferior(Ac) + identidad(n)                       
 
     U = Ac - triangularInferior(Ac) 
 
@@ -390,10 +526,12 @@ def res_tri(L, b, inferior = True) :
     """
     if not inferior:
         L = rotar180(L)
-        b = b[::-1]
+        b = b[::-1]             # Invierte b
     n = len(b)
     x = np.zeros(n)
-    for i, row in enumerate(L):
+
+    
+    for i, row in enumerate(L):                           # Sustitucion hacia adelante
         x[i] = (b[i] - prodint(row[:i], x[:i]) )/row[i]
     
     
@@ -401,7 +539,7 @@ def res_tri(L, b, inferior = True) :
 
 def res_tri_mat(L, B, inferior = True):
     """
-    Resuelve el sistema LX = B, 
+    Resuelve el sistema LX = B, para matrices.
     Recibe L triangular, superior o inferior segun parametro inferior, y B.
     Devuelve X, la matriz solucion. 
     """
@@ -415,11 +553,14 @@ def res_tri_mat(L, B, inferior = True):
 
 
 def res_LU(L,U, b):
+    # Resuelve Ax = b usando factorizacion LU.
+    # Primero resuelve Ly = b, luego Ux = y.
     y = res_tri(L,b)
     x = res_tri(U,y, inferior=False)
     return x
 
 def res_LU_mat(L,U, B):
+    # res LU para matrices
     Y = res_tri_mat(L,B)
     X = res_tri_mat(U,Y, inferior=False)
     return X
@@ -465,7 +606,9 @@ def esSDP(A, atol=1e-8) :
     L,D,V,_ = calculaLDV(A)
     if L is None or D is None or V is None:
         return False
-    for i in range(A.shape[0]):
+    
+
+    for i in range(A.shape[0]):         # Revisa la diagonal
         if A[i][i] <= 0:
             return False
 
@@ -490,15 +633,13 @@ Si la matriz A no es de n x n, debe retornar None
 """
 
 def QR_con_GS(A,tol=1e-12,retorna_nops=False):
-    #if not A.shape[1] >= A.shape[0]: # el apunte del TP pide mas filas que columnas. la toerica decia mas columnas que filas. esta es la que funciona
-    #    return None
     m = len(A)
     n = len(A[0])
     
 
     contador=0
-    QT=np.zeros((n,m)) 
-    R=np.zeros((n,n)) # R=np.zeros((k,n)) si no queres los 0s de mas
+    QT=np.zeros((n,m))      # QT almacenará las columnas ortonormalizadas
+    R=np.zeros((n,n))       # R=np.zeros((k,n)) si no queres los 0s de mas
     AColumnas = traspuesta(A).astype(np.float64)
 
     R[0][0]=norma(AColumnas[0],2)
@@ -514,7 +655,7 @@ def QR_con_GS(A,tol=1e-12,retorna_nops=False):
         if j % 100 == 0:
             print(f"ortonormalizando {j}-esimo vector de {n} a las {datetime.now().time()}")
         Qj=AColumnas[j]
-        for k in range(0,j):
+        for k in range(0,j):                # proyeccion de Qk
             R[k][j]=prodint(QT[k],Qj)
             Qj+=-R[k][j]*QT[k]
         R[j][j]=norma(Qj,2)
@@ -582,16 +723,9 @@ def QR_con_HH(A,tol=1e-12):
         alpha = - sign(x[0]) * norma(x, 2)     # doble negacion redundante??
         u = x - alpha * identidad(m-k)[0]
         if (unorma := norma(u, 2)) > tol:
-            u = u / unorma
-            #Hk =  houseHolder(u)
-            #for iter in range(k): 
-            #    Hk = expandirDiagonalPrincipalDesdeArriba(Hk, 1)
-            #
-            #R = matmul(Hk,R)
-            #Q = matmul(Q,traspuesta(Hk))       
-            R = matmulHouseHolderIzquierdaMenor(u,R)
+            u = u / unorma             
+            R = matmulHouseHolderIzquierdaMenor(u,R)    # Aplicamos los reflectores a R y Q
             Q = matmulHouseHolderDerechaMenor(Q,u)
-
 
     #borramos filas y columnas redundantes antes de devolver
     return Q[:,:n],R[:n,:]
@@ -622,6 +756,12 @@ def calculaQR(A,metodo='RH',tol=1e-12):
 
 
 def aplicarPotenciaUnaVez(A,v):
+
+    """
+    Aplica una iteración del método de la potencia.
+    Devuelve un vector normalizado.
+    """
+
     vSombrero = calcularAx(A, v)
     norm = norma(vSombrero,2)
     if norm == 0:
@@ -630,6 +770,11 @@ def aplicarPotenciaUnaVez(A,v):
     return vSombrero
 
 def aplicarPotenciaDosVeces(A,v):
+
+    """
+    Aplica dos iteraciones del método de la potencia.
+    Devuelve un vector normalizado y su prod int con v.
+    """
     
     vSombrero = aplicarPotenciaUnaVez(A,aplicarPotenciaUnaVez(A,v))
 
@@ -649,13 +794,12 @@ def metpot2k(A, tol =10**(-15) ,K=1000):
     v = np.random.randn(n)
     vSombrero, e = aplicarPotenciaDosVeces(A, v)
     for k in range(int(K)):
-        if abs(abs(e)-1)<=tol:
+        if abs(abs(e)-1)<=tol:                      # Cuando e es aprox ±1 significa que vSombrero y v están alineados
             break
         v = vSombrero
         vSombrero, e = aplicarPotenciaDosVeces(A, v)
 
     aVal = prodint(vSombrero, calcularAx(A, vSombrero))
-    err = e-1
 
     return vSombrero, aVal, k
 
@@ -672,28 +816,25 @@ def diagRH(A, tol =1e-8 ,K=1000):
     Si la matriz A no es simetrica, debe retornar None.
     """
 
-    ## DESHABILITO ESTOS CHEQUEOS PORQUE OCUPAN MUCHO TIEMPO
+    # DESHABILITO LOS OTROS CHEQUEOS PORQUE OCUPAN MUCHO TIEMPO
     if not cuadrada(A):
         return None
-    #if not (esS:=esSimetrica(A, tol)):
-    #    # si lo dejo haciendo cuentas grandes no quiero perderlo todo pq estaba mal la toleranica
-    #    print("WARNING: no se cumple la toleranicia pedida" )
-    #    # return None
+    
     n = len(A)
     if n % 20 == 0:
         print(f"diagonalizando {n}-esima sumbatriz a las {datetime.now().time()}")
 
 
-    v,aVal,_ = metpot2k(A,tol,K)
+    v,aVal,_ = metpot2k(A,tol,K)            # Encuentra el autovector dominante y autovalor
     e1_menos_v = identidad(n)[0] - v
     # Hv = houseHolder( e1_menos_v / norma(e1_menos_v, 2) )
     v_para_householder = e1_menos_v / norma(e1_menos_v, 2)
-    if n == 2:
+    if n == 2:                                                  # Caso base de la recursión: matriz 2x2
         S_matriz_avecs = houseHolder(v_para_householder)
         D_matriz_avals = matmulHouseHolderIzquierda(v_para_householder, matmulHouseHolderDerecha(A, v_para_householder))
     else:
         B = matmulHouseHolderIzquierda(v_para_householder, matmulHouseHolderDerecha(A, v_para_householder))
-        ASombrero = B[1:,1:]
+        ASombrero = B[1:,1:]                # submatriz reducida
         SSombrero,DSombero  = diagRH(ASombrero, tol, K)
         D_matriz_avals = expandirDiagonalPrincipalDesdeArriba(DSombero, aVal)  
         S_matriz_avecs = matmulHouseHolderIzquierda(v_para_householder,
@@ -917,15 +1058,14 @@ def cholesky(A):
         if columna % 100 == 0:
             print(f"choleskizando {columna}-esima columna a las {datetime.now().time()}")
         
-        #suma = np.sum(np.power(L[columna],2))
         suma = 0
         for i in range(columna):
             suma += (L[columna][i])**2
         
         diagonal = np.sqrt(A[columna][columna]- suma)
-        L[columna][columna] = diagonal
+        L[columna][columna] = diagonal                  # Calculamos el valor para la diagonal
 
-        for fila in range(columna+1, len(A)):
+        for fila in range(columna+1, len(A)):                       # Calculamos los valores debajo de la diagonal
             suma = np.sum(L[fila][:columna] * L[columna][:columna])
             
             L[fila][columna] = (A[fila][columna] - suma) / L[columna][columna]
@@ -949,6 +1089,12 @@ def pinvEcuacionesNormales(X,L, Y):
     Vt = res_LU_mat(L, traspuesta(L), X)
     V = traspuesta(Vt)
     W = matmul(Y,V)
+
+    if(not(Nump)):              # la guardo en cache
+        PEqNorm = cachepy(lambda:traspuesta(Vt), "PEqNorm")
+    elif(Nump):              # la guardo en cache
+        PEqNormNump = cachepy(lambda:traspuesta(Vt), "PEqNormNump")
+
     return W
 
 
@@ -983,6 +1129,11 @@ def pinvSVD(U, S, V, Y, tol=1e-8):
     
     W = matmul(Y,A_pseudoinv)
 
+    if(not(Nump)):              # la guardo en cache
+        PSVD = cachepy(lambda:matmul(VS_inv, traspuesta(U)), "PSVD")
+    elif(Nump):              # la guardo en cache
+        PSVDNump = cachepy(lambda:matmul(VS_inv, traspuesta(U)), "PSVDNump")
+
     return W
     
 
@@ -995,6 +1146,19 @@ def pinvQR(Q,R,Y):
     W = matmul(Y,V)
     
     print("Calculando W")
+
+
+    if(not(Nump)):              # la guardo en cache
+        PHH = cachepy(lambda:traspuesta(VT), "PHH")
+    elif(Nump):              # la guardo en cache
+        PHHNump = cachepy(lambda:traspuesta(VT), "PHHNump")
+        
+
+    if(QRGS and not(Nump)):              # la guardo en cache
+        PGS = cachepy(lambda:traspuesta(VT), "PGS")
+    elif(QRGS and Nump):              # la guardo en cache
+        PGSNump = cachepy(, "PGSNump")
+
     return W
 
 
@@ -1006,7 +1170,10 @@ def pinvHouseHolder(Q, R, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
-    return pinvQR(Q,R,Y)
+    QRHH=True
+    W=pinvQR(Q,R,Y)
+    QRHH=False
+    return W
 
 
 def pinvGramSchmidt(Q, R, Y):
@@ -1017,8 +1184,10 @@ def pinvGramSchmidt(Q, R, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
-    
-    return pinvQR(Q,R,Y)
+    QRGS=True
+    W=pinvQR(Q,R,Y)
+    QRGS=False
+    return W
 
 def esPseudoInversa(X, pX, tol=1e-8):
     """
