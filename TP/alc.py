@@ -4,18 +4,6 @@ import os
 import copy
 from datetime import datetime
 
-Nump=False
-QRHH = False
-QRGS=False
-PGS=None
-PGSNump=None
-PHH=None
-PGSNump=None
-PEqNorm=None
-PEqNormNump=None
-PSVD=None
-PSVDNump=None
-
 
 #Importante: estos labos tienen funciones extras generadas por nosotros
 
@@ -32,35 +20,6 @@ PSVDNump=None
 
 
 tol = 0.01
-
-cache_save_enabledpy = True              # Si se desean reemplazar los resultados que están guardados en cache cada vez que se ejecuta, esta variable debe estar en True. Caso contrario, dejarlo en False
-cache_load_enabledpy = False              # Esto debe estar en True si se quieren cargar los datos de los .npy
-
-
-def cachepy(calc, name):
-    if cache_load_enabledpy and os.path.isfile(f"{name}.npy"):
-        return np.load(f"{name}.npy", allow_pickle=True)
-    else:
-        val = calc()
-        if cache_save_enabledpy:
-            np.save(f"{name}.npy", val, allow_pickle=True)
-        return val
-
-def cache_manypy(calc, names):
-    if cache_load_enabledpy and all([os.path.isfile(f"{name}.npy") for name in names]):
-        return tuple([cachepy(lambda:None, name) for name in names])
-    else:
-        vals = calc()
-        for name, val in zip(names, vals):
-            cachepy(lambda:val, name)
-        return vals
-    
-# no quiero perder horas de computo pq fallo un assert, armo esto para que si "Fallaría" el assert te avisa
-def pseudoAssertEqualitypy(X,Y, atol = tol):
-    try:
-        assert np.allclose(X,Y, atol=tol)
-    except:
-        print("WARNING: Necesita tolerancia ", np.max(np.abs(X-Y)))
 
 
 
@@ -1089,12 +1048,6 @@ def pinvEcuacionesNormales(X,L, Y):
     Vt = res_LU_mat(L, traspuesta(L), X)
     V = traspuesta(Vt)
     W = matmul(Y,V)
-
-    if(not(Nump)):              # la guardo en cache
-        PEqNorm = cachepy(lambda:traspuesta(Vt), "PEqNorm")
-    elif(Nump):              # la guardo en cache
-        PEqNormNump = cachepy(lambda:traspuesta(Vt), "PEqNormNump")
-
     return W
 
 
@@ -1129,11 +1082,6 @@ def pinvSVD(U, S, V, Y, tol=1e-8):
     
     W = matmul(Y,A_pseudoinv)
 
-    if(not(Nump)):              # la guardo en cache
-        PSVD = cachepy(lambda:matmul(VS_inv, traspuesta(U)), "PSVD")
-    elif(Nump):              # la guardo en cache
-        PSVDNump = cachepy(lambda:matmul(VS_inv, traspuesta(U)), "PSVDNump")
-
     return W
     
 
@@ -1146,19 +1094,6 @@ def pinvQR(Q,R,Y):
     W = matmul(Y,V)
     
     print("Calculando W")
-
-
-    if(not(Nump)):              # la guardo en cache
-        PHH = cachepy(lambda:traspuesta(VT), "PHH")
-    elif(Nump):              # la guardo en cache
-        PHHNump = cachepy(lambda:traspuesta(VT), "PHHNump")
-        
-
-    if(QRGS and not(Nump)):              # la guardo en cache
-        PGS = cachepy(lambda:traspuesta(VT), "PGS")
-    elif(QRGS and Nump):              # la guardo en cache
-        PGSNump = cachepy(lambda:traspuesta(VT), "PGSNump")
-
     return W
 
 
@@ -1170,10 +1105,7 @@ def pinvHouseHolder(Q, R, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
-    QRHH=True
-    W=pinvQR(Q,R,Y)
-    QRHH=False
-    return W
+    return pinvQR(Q,R,Y)
 
 
 def pinvGramSchmidt(Q, R, Y):
@@ -1184,10 +1116,8 @@ def pinvGramSchmidt(Q, R, Y):
     Y: matriz de targets de entrenamiento. 
     retorna pesos W
     """
-    QRGS=True
-    W=pinvQR(Q,R,Y)
-    QRGS=False
-    return W
+    
+    return pinvQR(Q,R,Y)
 
 def esPseudoInversa(X, pX, tol=1e-8):
     """
@@ -1206,7 +1136,6 @@ def esPseudoInversa(X, pX, tol=1e-8):
     
 
     return pasa_condiciones
-
 
 
 
